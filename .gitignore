@@ -1,0 +1,29 @@
+## MAC OS
+.DS_Store
+
+## VIM
+*.swp
+
+## IntelliJ
+*.iml
+.idea
+
+## PROJECT::GENERAL
+coverage
+rdoc
+pkg
+*.gem
+*.rbc
+.bundle
+.config
+.yardoc
+/Gemfile.lock
+InstalledFiles
+_yardoc
+doc/
+lib/bundler/man
+spec/reports
+test/tmp
+test/version_tmp
+tmp
+## PROJECT::SPECIFIC
