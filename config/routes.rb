@@ -1,19 +1,9 @@
 RailsMessagingRestApi::Application.routes.draw do
-  scope '/api', module: 'api' do
-    scope '/v1', module: 'v1', defaults: {format: 'json'} do
-
-      # Users
-      scope '/users' do
-        get '/' => 'users#index'
-        post '/' => 'users#create'
-        scope '/:id' do
-          get '/' => 'users#show'
-          put '/' => 'users#update'
-        end
-      end
-
+  namespace :api, defaults: {format: 'json'} do
+    namespace :v1 do
+      resources :users, :param => :user_id, only: [:index, :create, :show, :update]
     end
   end
 
-  root 'index#index'
+  root 'welcome#index'
 end
