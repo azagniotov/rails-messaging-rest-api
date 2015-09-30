@@ -7,9 +7,11 @@ class API::V1::UsersController < API::V1::BaseApiController
   end
 
   def create
-    # code to create a new post based on the parameters that
-    # were submitted with the form (and are now available in the
-    # params hash)
+    user = User.new(user_params)
+    if user.save
+      session[:user_id] = user.id
+      render json: user
+    end
   end
 
   def show
@@ -21,5 +23,10 @@ class API::V1::UsersController < API::V1::BaseApiController
     # actually update the attributes of that post.  Once that's
     # done, redirect us to somewhere like the Show page for that
     # post
+  end
+
+  private
+  def user_params
+    params.require(:user).permit(:email, :password, :name)
   end
 end
