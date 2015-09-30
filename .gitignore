@@ -17,6 +17,8 @@
 /tmp
 
 ## PROJECT::GENERAL
+.DS_Store
+.idea/
 coverage
 rdoc
 pkg
