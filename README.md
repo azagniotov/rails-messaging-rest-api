@@ -10,3 +10,4 @@
 
 1. User input submitted via API is valid, ie.: no email or password validation
 2. rake db:reseed
+3. After creation users cannot be updated

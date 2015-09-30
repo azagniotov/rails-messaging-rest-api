@@ -19,11 +19,4 @@ class API::V1::UsersController < API::V1::BaseApiController
     render json: User.find(params[:user_id])
   end
 
-  def update
-    # code to figure out which post we're trying to update, then
-    # actually update the attributes of that post.  Once that's
-    # done, redirect us to somewhere like the Show page for that
-    # post
-  end
-
 end
