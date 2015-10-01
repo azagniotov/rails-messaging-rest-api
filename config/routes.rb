@@ -1,4 +1,7 @@
 RailsMessagingRestApi::Application.routes.draw do
+
+  apipie
+
   scope '/api', module: 'api' do
     scope '/v1', module: 'v1', defaults: {format: 'json'} do
 

@@ -19,3 +19,4 @@ creating new users (POST to `/api/v1/users/`). In case of creating a new user, t
 access authentication by submitting GET request to: `/api/v1/sessions`.
 8. On each API call I do a DB lookup to validate API auth token
 9. Model validations are only to check whether required fields are set
+10. API docs: rails g apipie:install

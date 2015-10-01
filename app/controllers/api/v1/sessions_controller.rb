@@ -2,6 +2,7 @@ class API::V1::SessionsController < API::V1::BaseApiController
 
   skip_before_action :api_key_authorize!, only: [:index]
 
+  api :GET, 'api/v1/sessions', 'Gets API authentication token. Must set Basic Authorization header using email and password'
   def index
     authenticate
   end
