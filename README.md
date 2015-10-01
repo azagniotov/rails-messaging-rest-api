@@ -8,7 +8,7 @@
 
 #### Design Decisions
 
-1. User input submitted via API is valid, ie.: no email or password validation
+1. User input submitted via API is valid, ie.: no email format or password complexity validation
 2. rake db:reseed
 3. After creation users cannot be updated
 4. API JSON responses are generated as per `http://jsonapi.org/format/`
@@ -17,3 +17,5 @@
 creating new users (POST to `/api/v1/users/`). In case of creating a new user, the API token will be return as part of JSON response.
 7. To get the API authorization token, existing user heeds to authenticate himself using his credentials and basic 
 access authentication by submitting GET request to: `/api/v1/sessions`.
+8. On each API call I do a DB lookup to validate API auth token
+9. Model validations are only to check whether required fields are set

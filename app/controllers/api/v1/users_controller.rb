@@ -6,7 +6,7 @@ class API::V1::UsersController < API::V1::BaseApiController
     user_params = params.require(:user).permit(:email, :password, :name)
     user = User.new(user_params)
     if user.save
-      render json: user
+      render json: user, status: 201
     end
   end
 
