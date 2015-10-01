@@ -16,6 +16,11 @@ class API::V1::UsersController < API::V1::BaseApiController
     end
   end
 
+  api :GET, 'api/v1/users', 'Gets all users'
+  def index
+    render json: User.all
+  end
+
   api :GET, 'api/v1/users/:user_id', 'Gets user by id'
   param :user_id, :number, :desc => 'User id', :required => true
   def show

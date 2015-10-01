@@ -1,4 +1,4 @@
-class SessionsControllerIntegrationTest < ActionDispatch::IntegrationTest
+class SessionsFlowsTest < ActionDispatch::IntegrationTest
 
   test 'should not authenticate user when "basic access authentication" header is not set' do
     get '/api/v1/sessions'

@@ -6,6 +6,7 @@ RailsMessagingRestApi::Application.routes.draw do
     scope '/v1', module: 'v1', defaults: {format: 'json'} do
 
       scope '/users' do
+        get '/' => 'users#index'
         post '/' => 'users#create'
         scope '/:user_id' do
           get '/' => 'users#show'
