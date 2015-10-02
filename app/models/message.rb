@@ -1,4 +1,6 @@
 class Message < ActiveRecord::Base
-  validates :conversation_id, presence: true
   validates :sender_id, presence: true
+
+  has_one :conversation_message
+  has_one :conversation, :through => :conversation_message
 end

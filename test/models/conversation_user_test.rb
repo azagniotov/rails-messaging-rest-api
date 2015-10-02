@@ -21,6 +21,8 @@ class ConversationUserTest < ActiveSupport::TestCase
   test 'user#1 should be a participant in two conversations' do
     user = User.find(@user_one.id)
     assert_equal 2, user.conversations.size
+    assert_includes user.conversations, @conversation_one
+    assert_includes user.conversations, @conversation_two
   end
 
   test 'user#2 should be a participant in one conversation' do
@@ -32,6 +34,8 @@ class ConversationUserTest < ActiveSupport::TestCase
   test 'conversation#1 should have two participants' do
     conversation = Conversation.find(@conversation_one.id)
     assert_equal 2, conversation.users.size
+    assert_includes conversation.users, @user_one
+    assert_includes conversation.users, @user_two
   end
 
   test 'conversation#2 should have one participant' do
