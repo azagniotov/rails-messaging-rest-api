@@ -5,6 +5,10 @@ RailsMessagingRestApi::Application.routes.draw do
   scope '/api', module: 'api' do
     scope '/v1', module: 'v1', defaults: {format: 'json'} do
 
+      scope '/sessions' do
+        get '/' => 'sessions#index'
+      end
+
       scope '/users' do
         get '/' => 'users#index'
         post '/' => 'users#create'
@@ -13,8 +17,18 @@ RailsMessagingRestApi::Application.routes.draw do
         end
       end
 
-      scope '/sessions' do
-        get '/' => 'sessions#index'
+      scope '/conversations' do
+        get '/' => 'conversations#index'
+        post '/' => 'conversations#create'
+        scope '/:conversation_id' do
+          get '/' => 'conversations#show'
+          scope '/messages' do
+            get '/' => 'conversations#show_messages'
+          end
+          scope '/users' do
+            get '/' => 'conversations#show_users'
+          end
+        end
       end
 
     end
