@@ -9,6 +9,7 @@ class API::V1::UsersController < API::V1::BaseApiController
     param :password, String, :desc => 'Desired user password', :required => true
   end
   def create
+    # Param white listing
     user_params = params.require(:user).permit(:email, :password, :name)
     user = User.new(user_params)
     if user.save

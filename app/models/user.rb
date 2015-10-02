@@ -40,4 +40,7 @@ class User < ActiveRecord::Base
   def clear_password
     self.password = nil
   end
+
+  has_many :conversation_users
+  has_many :conversations, through: :conversation_users
 end

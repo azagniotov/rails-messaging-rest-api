@@ -11,12 +11,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151001224601) do
+ActiveRecord::Schema.define(version: 20151001231338) do
+
+  create_table "conversation_users", force: :cascade do |t|
+    t.integer  "conversation_id"
+    t.integer  "user_id"
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
+  end
 
   create_table "conversations", force: :cascade do |t|
     t.integer  "started_by"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "users", force: :cascade do |t|
@@ -25,8 +32,8 @@ ActiveRecord::Schema.define(version: 20151001224601) do
     t.string   "password"
     t.string   "salt"
     t.string   "auth_token"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
 end
