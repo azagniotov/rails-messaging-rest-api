@@ -6,22 +6,6 @@ module API
       before_action only: [:index, :create, :show, :update]
       respond_to :json
 
-      rescue_from ActionController::ParameterMissing do |exception|
-        render :json => {
-             code: 422,
-             message: '422 Unprocessable Entity',
-             description: "The server was unable to process the Request payload: '#{exception.param}' is missing"
-         }, :status => 422
-      end
-
-      rescue_from ActionController::UnpermittedParameters do |exception|
-        render :json => {
-             code: 422,
-             message: '422 Unprocessable Entity',
-             description: "The server was unable to process the Request payload: #{exception}"
-         }, :status => 422
-      end
-
       private
       def api_key_authorize!
         if !authorization_header

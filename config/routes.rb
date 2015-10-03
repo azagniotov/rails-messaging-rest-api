@@ -37,7 +37,7 @@ RailsMessagingRestApi::Application.routes.draw do
 
   root 'welcome#index'
 
-  match '/400' => 'errors#bad_request', via: :all
-  match '/404' => 'errors#not_found', via: :all
-  match '/500' => 'errors#internal_error', via: :all
+  match '/400' => 'application#bad_request', via: :all
+  match '/404' => 'application#not_found', via: :all
+  match '/500' => 'application#internal_error', via: :all
 end

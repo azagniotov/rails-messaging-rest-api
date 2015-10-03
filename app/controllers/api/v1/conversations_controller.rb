@@ -1,7 +1,5 @@
 class API::V1::ConversationsController < API::V1::BaseApiController
 
-  skip_before_action :api_key_authorize!
-
   def create
 
   end
