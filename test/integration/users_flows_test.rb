@@ -60,4 +60,13 @@ class UsersFlowsTest < ActionDispatch::IntegrationTest
     assert_equal @create_user_json_response['data']['id'], get_json_response['data'][0]['id']
     assert_equal '200', response.code
   end
+
+  test 'should get empty user conversations by user id' do
+    user_id = @create_user_json_response['data']['id']
+    get "/api/v1/users/#{user_id}/conversations", nil, {'X-Api-Key': @auth_token}
+    get_json_response = ActiveSupport::JSON.decode response.body
+
+    assert_not_nil get_json_response['data']['relationships']['conversations']
+    assert_empty get_json_response['data']['relationships']['conversations']['data']
+  end
 end

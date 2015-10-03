@@ -14,6 +14,9 @@ RailsMessagingRestApi::Application.routes.draw do
         post '/' => 'users#create'
         scope '/:user_id' do
           get '/' => 'users#show'
+          scope '/conversations' do
+            get '/' => 'users#show_conversations'
+          end
         end
       end
 
