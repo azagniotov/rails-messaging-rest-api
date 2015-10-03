@@ -1,5 +1,18 @@
 class SessionsFlowsTest < ActionDispatch::IntegrationTest
 
+  def setup
+    @email = 'yay@gmail.com'
+    @password = '54321'
+    post '/api/v1/users', :user => { :name => 'Alex', :email => @email, :password => @password }
+    assert_not_nil ActiveSupport::JSON.decode response.body
+
+    @basic = ActionController::HttpAuthentication::Basic
+  end
+
+  def teardown
+    User.delete_all
+  end
+
   test 'should not authenticate user when "basic access authentication" header is not set' do
     get '/api/v1/sessions'
 
@@ -8,12 +21,7 @@ class SessionsFlowsTest < ActionDispatch::IntegrationTest
   end
 
   test 'should not authenticate user with wrong password' do
-    post '/api/v1/users', :user => { :name => 'Alex', :email => 'wow@gmail.com', :password => '54321' }
-    post_json_response = ActiveSupport::JSON.decode response.body
-    assert_not_nil post_json_response
-
-    basic = ActionController::HttpAuthentication::Basic
-    credentials = basic.encode_credentials('wow@gmail.com', '12345')
+    credentials = @basic.encode_credentials('wow@gmail.com', @password)
     get '/api/v1/sessions', nil, {'Authorization': credentials}
 
     assert_equal 'HTTP Basic: Access denied.', response.body.strip
@@ -21,15 +29,10 @@ class SessionsFlowsTest < ActionDispatch::IntegrationTest
   end
 
   test 'should authenticate user by correct credentials' do
-    post '/api/v1/users', :user => { :name => 'Alex', :email => 'wow@gmail.com', :password => '54321' }
-    post_json_response = ActiveSupport::JSON.decode response.body
-    assert_not_nil post_json_response
-
-    basic = ActionController::HttpAuthentication::Basic
-    credentials = basic.encode_credentials('wow@gmail.com', '54321')
+    credentials = @basic.encode_credentials(@email, @password)
     get '/api/v1/sessions', nil, {'Authorization': credentials}
 
-    assert_equal post_json_response['data']['attributes']['auth_token'], response.body
+    assert_not_nil response.body
     assert_equal '200', response.code
   end
 end

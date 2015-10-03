@@ -1,9 +1,6 @@
 require 'test_helper'
 
 class API::V1::UsersControllerTest < ActionController::TestCase
-  setup do
-    request.headers['Content-Type'] = 'application/json'
-  end
 
   test 'should not get user by id when API key header is not set' do
     get :show, user_id: 8
@@ -23,35 +20,4 @@ class API::V1::UsersControllerTest < ActionController::TestCase
     assert_equal 401, json_response['code']
     assert_equal '401', response.code
   end
-
-  test 'should get user by id' do
-    post :create, :user => { :name => 'Alex', :email => 'yay@gmail.com', :password => '54321' }
-    post_json_response = ActiveSupport::JSON.decode response.body
-    assert_not_nil post_json_response
-
-    user_id = post_json_response['data']['id']
-    auth_token = post_json_response['data']['attributes']['auth_token']
-
-    request.headers['X-Api-Key'] = auth_token
-    get :show, user_id: user_id
-    get_json_response = ActiveSupport::JSON.decode response.body
-
-    assert_equal auth_token, get_json_response['data']['attributes']['auth_token']
-    assert_equal '200', response.code
-  end
-
-  test 'should get all users' do
-    post :create, :user => { :name => 'Alex', :email => 'yay@gmail.com', :password => '54321' }
-    post_json_response = ActiveSupport::JSON.decode response.body
-    assert_not_nil post_json_response
-
-    auth_token = post_json_response['data']['attributes']['auth_token']
-    request.headers['X-Api-Key'] = auth_token
-    get :index
-    get_json_response = ActiveSupport::JSON.decode response.body
-
-    assert_equal auth_token, get_json_response['data'][0]['attributes']['auth_token']
-    assert_equal '200', response.code
-  end
-
 end

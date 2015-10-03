@@ -1,12 +1,27 @@
 class UsersFlowsTest < ActionDispatch::IntegrationTest
 
-  test 'should create user' do
-    post '/api/v1/users', :user => { :name => 'Alex', :email => 'azagniotov@gmail.com', :password => '54321' }
-    json_response = ActiveSupport::JSON.decode response.body
-
-    assert_not_nil json_response
-    assert_equal 'azagniotov@gmail.com', json_response['data']['attributes']['email']
+  def setup
+    @name = 'Alex'
+    @email = 'yay@gmail.com'
+    @password = '54321'
+    post '/api/v1/users', :user => { :name => @name, :email => @email, :password => @password }
+    @create_user_json_response = ActiveSupport::JSON.decode response.body
+    assert_not_nil @create_user_json_response
     assert_equal '201', response.code
+
+    @basic = ActionController::HttpAuthentication::Basic
+    credentials = @basic.encode_credentials(@email, @password)
+    get '/api/v1/sessions', nil, {'Authorization': credentials}
+    @auth_token = response.body
+  end
+
+  def teardown
+    User.delete_all
+  end
+
+  test 'should return expected data in create user JSON response' do
+    assert_equal @name, @create_user_json_response['data']['attributes']['name']
+    assert_equal @email, @create_user_json_response['data']['attributes']['email']
   end
 
   test 'should not get user by id when API key header is not set' do
@@ -30,29 +45,19 @@ class UsersFlowsTest < ActionDispatch::IntegrationTest
   end
 
   test 'should get user by id' do
-    post '/api/v1/users', :user => { :name => 'Alex', :email => 'yay@gmail.com', :password => '54321' }
-    post_json_response = ActiveSupport::JSON.decode response.body
-    assert_not_nil post_json_response
-
-    user_id = post_json_response['data']['id']
-    auth_token = post_json_response['data']['attributes']['auth_token']
-    get "/api/v1/users/#{user_id}", nil, {'X-Api-Key': auth_token}
+    user_id = @create_user_json_response['data']['id']
+    get "/api/v1/users/#{user_id}", nil, {'X-Api-Key': @auth_token}
     get_json_response = ActiveSupport::JSON.decode response.body
 
-    assert_equal auth_token, get_json_response['data']['attributes']['auth_token']
+    assert_equal user_id, get_json_response['data']['id']
     assert_equal '200', response.code
   end
 
   test 'should get all users' do
-    post '/api/v1/users', :user => { :name => 'Alex', :email => 'yay@gmail.com', :password => '54321' }
-    post_json_response = ActiveSupport::JSON.decode response.body
-    assert_not_nil post_json_response
-
-    auth_token = post_json_response['data']['attributes']['auth_token']
-    get '/api/v1/users', nil, {'X-Api-Key': auth_token}
+    get '/api/v1/users', nil, {'X-Api-Key': @auth_token}
     get_json_response = ActiveSupport::JSON.decode response.body
 
-    assert_equal auth_token, get_json_response['data'][0]['attributes']['auth_token']
+    assert_equal @create_user_json_response['data']['id'], get_json_response['data'][0]['id']
     assert_equal '200', response.code
   end
 end
