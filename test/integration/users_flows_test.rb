@@ -30,8 +30,8 @@ class UsersFlowsTest < ActionDispatch::IntegrationTest
 
     assert_not_nil json_response
     assert_equal 'X-Api-Key header is not set', json_response['description']
-    assert_equal 401, json_response['code']
-    assert_equal '401', response.code
+    assert_equal 403, json_response['code']
+    assert_equal '403', response.code
   end
 
   test 'should not get user by id when API key header value is wrong' do
@@ -40,8 +40,8 @@ class UsersFlowsTest < ActionDispatch::IntegrationTest
 
     assert_not_nil json_response
     assert_equal 'Api key is not valid', json_response['description']
-    assert_equal 401, json_response['code']
-    assert_equal '401', response.code
+    assert_equal 403, json_response['code']
+    assert_equal '403', response.code
   end
 
   test 'should get user by id' do
@@ -69,5 +69,32 @@ class UsersFlowsTest < ActionDispatch::IntegrationTest
     assert_equal user_id, get_json_response['data']['id']
     assert_not_nil get_json_response['data']['relationships']['conversations']
     assert_empty get_json_response['data']['relationships']['conversations']['data']
+  end
+
+  test 'should respond with error JSON when new user email already exists' do
+    post '/api/v1/users', :user => { :name => @name, :email => @email, :password => @password }
+    error_json_response = ActiveSupport::JSON.decode response.body
+
+    assert_not_nil error_json_response
+    assert_equal "User with email '#{@email}' is already registered", error_json_response['description']
+    assert_equal '400', response.code
+  end
+
+  test 'should respond with error JSON when new user request has missing param' do
+    post '/api/v1/users', :user => { :email => @email, :password => @password }
+    error_json_response = ActiveSupport::JSON.decode response.body
+
+    assert_not_nil error_json_response
+    assert_equal "The server was unable to process the Request payload: 'name' is missing", error_json_response['description']
+    assert_equal '422', response.code
+  end
+
+  test 'should respond with error JSON when new user request contains unexpected param' do
+    post '/api/v1/users', :user => { :name => @name, :email => @email, :password => @password, :unexpected => 'param' }
+    error_json_response = ActiveSupport::JSON.decode response.body
+
+    assert_not_nil error_json_response
+    assert_equal 'The server was unable to process the Request payload: found unpermitted parameter: unexpected', error_json_response['description']
+    assert_equal '422', response.code
   end
 end

@@ -1,7 +1,5 @@
 RailsMessagingRestApi::Application.routes.draw do
 
-  apipie
-
   scope '/api', module: 'api' do
     scope '/v1', module: 'v1', defaults: {format: 'json'} do
 
@@ -39,8 +37,7 @@ RailsMessagingRestApi::Application.routes.draw do
 
   root 'welcome#index'
 
-  match '/400' => 'errors#bad_request', via: [:get, :post, :put, :patch, :delete]
-  match '/404' => 'errors#not_found', via: [:get, :post, :put, :patch, :delete]
-  match '/422' => 'errors#unprocessable', via: [:get, :post, :put, :patch, :delete]
-  match '/500' => 'errors#internal_error', via: [:get, :post, :put, :patch, :delete]
+  match '/400' => 'errors#bad_request', via: :all
+  match '/404' => 'errors#not_found', via: :all
+  match '/500' => 'errors#internal_error', via: :all
 end

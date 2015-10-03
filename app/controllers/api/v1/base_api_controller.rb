@@ -6,21 +6,37 @@ module API
       before_action only: [:index, :create, :show, :update]
       respond_to :json
 
+      rescue_from ActionController::ParameterMissing do |exception|
+        render :json => {
+             code: 422,
+             message: '422 Unprocessable Entity',
+             description: "The server was unable to process the Request payload: '#{exception.param}' is missing"
+         }, :status => 422
+      end
+
+      rescue_from ActionController::UnpermittedParameters do |exception|
+        render :json => {
+             code: 422,
+             message: '422 Unprocessable Entity',
+             description: "The server was unable to process the Request payload: #{exception}"
+         }, :status => 422
+      end
+
       private
       def api_key_authorize!
         if !authorization_header
-          not_authorized 'X-Api-Key header is not set'
+          forbidden 'X-Api-Key header is not set'
         else
-          not_authorized 'Api key is not valid' unless api_key_valid
+          forbidden 'Api key is not valid' unless api_key_valid
         end
       end
 
-      def not_authorized(message)
+      def forbidden(message)
         render :json => {
-                   code: 401,
-                   message: '401 Unauthorized',
+                   code: 403,
+                   message: '403 Forbidden',
                    description: message
-               }, :status => 401
+               }, :status => 403
       end
 
       def authorization_header

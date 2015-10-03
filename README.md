@@ -21,3 +21,4 @@ access authentication by submitting GET request to: `/api/v1/sessions`.
 9. Model validations are only to check whether required fields are set
 10. API docs: rails g apipie:install
 11. When listing all the users, conversation or messages there is no paging in place. What ever is in DB will be listed
+12. Users are unique.y identified by email in the system

@@ -1,4 +1,5 @@
 class ErrorsController < ApplicationController
+  protect_from_forgery with: :null_session
 
   def bad_request
     render :json => {
@@ -14,14 +15,6 @@ class ErrorsController < ApplicationController
                message: '404 Not Found',
                description: 'The server has not found anything matching the Request-URI'
            }, :status => 404
-  end
-
-  def unprocessable
-    render :json => {
-               code: 422,
-               message: '422 Unprocessable Entity',
-               description: 'The server was unable to process the contained instructions'
-           }, :status => 422
   end
 
   def internal_error

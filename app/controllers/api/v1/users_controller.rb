@@ -2,48 +2,40 @@ class API::V1::UsersController < API::V1::BaseApiController
 
   skip_before_action :api_key_authorize!, only: [:create]
 
-  api :POST, 'api/v1/users', 'Creates a new user'
-  param :user, Hash, :desc => 'New user information', :required => true do
-    param :name, String, :desc => 'New user name', :required => true
-    param :email, String, :desc => 'New user email', :required => true
-    param :password, String, :desc => 'Desired user password', :required => true
-  end
-  meta :cURL => 'curl -X POST http://localhost:3000/api/v1/users \
-                    -d \'{"user": {"email": "azagniotov@gmail.com", "password": "12345", "name": "alex"}}\' \
-                    -H "Content-Type: application/json"'
   def create
-    # Param white listing
-    user_params = params.require(:user).permit(:email, :password, :name)
+    user_params = raw_user_params
     user = User.new(user_params)
-    if user.save
-      render json: user, serializer: UserSerializer, status: 201
+    if User.exists?(email: user.email)
+      render :json => {
+             code: 400,
+             message: '400 Bad Request',
+             description: "User with email '#{user.email}' is already registered"
+         }, :status => 400
+    else
+      if user.save
+        render json: user, serializer: UserSerializer, status: 201
+      end
     end
   end
 
-  api :GET, 'api/v1/users', 'Gets all users'
-  meta :cURL => 'curl http://localhost:3000/api/v1/users \
-                    -H "X-Api-Key: 0e0afd823ce34d2bb55c5878d405404b" \
-                    -H "Content-Type: application/json"'
   def index
     render json: User.all, each_serializer: UserSerializer
   end
 
-  api :GET, 'api/v1/users/:user_id', 'Gets user by id'
-  param :user_id, :number, :desc => 'User id', :required => true
-  meta :cURL => 'curl http://localhost:3000/api/v1/users/1 \
-                    -H "X-Api-Key: 0e0afd823ce34d2bb55c5878d405404b" \
-                    -H "Content-Type: application/json"'
   def show
     render json: User.find(params[:user_id]), serializer: UserSerializer
   end
 
-  api :GET, 'api/v1/users/:user_id', 'Gets user conversations by user id'
-  param :user_id, :number, :desc => 'User id', :required => true
-  meta :cURL => 'curl http://localhost:3000/api/v1/users/1/conversations \
-                    -H "X-Api-Key: 0e0afd823ce34d2bb55c5878d405404b" \
-                    -H "Content-Type: application/json"'
   def show_conversations
     render json: User.find(params[:user_id]), serializer: UserWithConversationsSerializer
+  end
+
+  private
+  def raw_user_params
+    params.require(:user).require(:email)
+    params.require(:user).require(:password)
+    params.require(:user).require(:name)
+    params.require(:user).permit(:email, :password, :name)
   end
 
 end
