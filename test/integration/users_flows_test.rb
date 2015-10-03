@@ -14,7 +14,8 @@ class UsersFlowsTest < ActionDispatch::IntegrationTest
     json_response = ActiveSupport::JSON.decode response.body
 
     assert_not_nil json_response
-    assert_equal 'X-Api-Key header is not set', json_response['status']
+    assert_equal 'X-Api-Key header is not set', json_response['description']
+    assert_equal 401, json_response['code']
     assert_equal '401', response.code
   end
 
@@ -23,7 +24,8 @@ class UsersFlowsTest < ActionDispatch::IntegrationTest
     json_response = ActiveSupport::JSON.decode response.body
 
     assert_not_nil json_response
-    assert_equal 'Api key is not valid', json_response['status']
+    assert_equal 'Api key is not valid', json_response['description']
+    assert_equal 401, json_response['code']
     assert_equal '401', response.code
   end
 

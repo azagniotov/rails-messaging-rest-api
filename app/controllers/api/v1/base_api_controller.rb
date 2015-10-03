@@ -16,7 +16,11 @@ module API
       end
 
       def not_authorized(message)
-        render json: {status: message}, status: 401
+        render :json => {
+                   code: 401,
+                   message: '401 Unauthorized',
+                   description: message
+               }, :status => 401
       end
 
       def authorization_header

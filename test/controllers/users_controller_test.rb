@@ -9,7 +9,8 @@ class API::V1::UsersControllerTest < ActionController::TestCase
     get :show, user_id: 8
 
     json_response = ActiveSupport::JSON.decode response.body
-    assert_equal 'X-Api-Key header is not set', json_response['status']
+    assert_equal 'X-Api-Key header is not set', json_response['description']
+    assert_equal 401, json_response['code']
     assert_equal '401', response.code
   end
 
@@ -18,7 +19,8 @@ class API::V1::UsersControllerTest < ActionController::TestCase
     get :show, user_id: 8
 
     json_response = ActiveSupport::JSON.decode response.body
-    assert_equal 'Api key is not valid', json_response['status']
+    assert_equal 'Api key is not valid', json_response['description']
+    assert_equal 401, json_response['code']
     assert_equal '401', response.code
   end
 
