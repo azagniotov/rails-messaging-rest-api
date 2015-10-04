@@ -3,8 +3,7 @@ class API::V1::UsersController < API::V1::BaseApiController
   skip_before_action :api_key_authorize!, only: [:create]
 
   def create
-    user_params = raw_user_params
-    user = User.new(user_params)
+    user = User.new(raw_user_params)
     if User.exists?(email: user.email)
       render :json => {
              code: 400,
