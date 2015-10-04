@@ -12,7 +12,8 @@ class ConversationsFlowsTest < ActionDispatch::IntegrationTest
     @basic = ActionController::HttpAuthentication::Basic
     credentials = @basic.encode_credentials(@email, @password)
     get '/api/v1/sessions', nil, {'Authorization': credentials}
-    @auth_token = response.body
+    authorization_json_response = ActiveSupport::JSON.decode response.body
+    @auth_token = authorization_json_response['auth_token']
 
     @user_id = @create_user_json_response['data']['id']
     post '/api/v1/conversations', {:conversation => {:started_by => @user_id, :message => @message, :recipient_ids => [8, 9]}}, {'X-Api-Key': @auth_token}
@@ -36,6 +37,15 @@ class ConversationsFlowsTest < ActionDispatch::IntegrationTest
 
     assert_not_nil error_json_response
     assert_equal "User with id '123456' does not exist", error_json_response['description']
+    assert_equal '400', response.code
+  end
+
+  test 'should not post new conversation message when conversation does not exist' do
+    post '/api/v1/conversations/88888888', {:conversation => {:sender_id => 123456, :message => @message }}, {'X-Api-Key': @auth_token}
+    error_json_response = ActiveSupport::JSON.decode response.body
+
+    assert_not_nil error_json_response
+    assert_equal "Conversation with id '88888888' does not exist", error_json_response['description']
     assert_equal '400', response.code
   end
 

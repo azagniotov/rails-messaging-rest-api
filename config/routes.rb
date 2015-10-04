@@ -23,6 +23,7 @@ RailsMessagingRestApi::Application.routes.draw do
         post '/' => 'conversations#create', as: 'create_new_conversation'
         scope '/:conversation_id' do
           get '/' => 'conversations#show', as: 'get_conversation_by_id'
+          post '/' => 'conversations#post_message', as: 'post_new_message_to_conversation'
           scope '/messages' do
             get '/' => 'conversations#show_messages', as: 'get_conversation_messages_by_conversation_id'
           end

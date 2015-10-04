@@ -12,7 +12,8 @@ class MessagesFlowsTest < ActionDispatch::IntegrationTest
     basic = ActionController::HttpAuthentication::Basic
     credentials = basic.encode_credentials(@email, @password)
     get '/api/v1/sessions', nil, {'Authorization': credentials}
-    @auth_token = response.body
+    authorization_json_response = ActiveSupport::JSON.decode response.body
+    @auth_token = authorization_json_response['auth_token']
 
     @message_id = Message.create(sender_id: 12345, text: @message).id
   end

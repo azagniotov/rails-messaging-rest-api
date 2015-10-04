@@ -10,8 +10,11 @@ class API::V1::SessionsController < API::V1::BaseApiController
   def authenticate
     case request.format
       when Mime::JSON
-        if (auth_token = authenticate_with_http_basic { |email, password| User.authenticate(email, password) })
-          render json: auth_token
+        if (auth_token = authenticate_with_http_basic { |email, password|
+          @email = email
+          User.authenticate(email, password)
+        })
+          render json: { email: @email, auth_token: auth_token }
         else
           request_http_basic_authentication
         end

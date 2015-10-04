@@ -31,8 +31,9 @@ class SessionsFlowsTest < ActionDispatch::IntegrationTest
   test 'should authenticate user by correct credentials' do
     credentials = @basic.encode_credentials(@email, @password)
     get '/api/v1/sessions', nil, {'Authorization': credentials}
+    json_response = ActiveSupport::JSON.decode response.body
 
-    assert_not_nil response.body
+    assert_not_nil json_response['auth_token']
     assert_equal '200', response.code
   end
 end

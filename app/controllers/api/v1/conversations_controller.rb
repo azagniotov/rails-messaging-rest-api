@@ -1,8 +1,10 @@
+require 'uri'
+
 class API::V1::ConversationsController < API::V1::BaseApiController
 
   def create
     Conversation.transaction do
-      params = raw_conversation_params
+      params = new_conversation_params
       if User.exists?(id: params[:started_by])
         conversation = Conversation.new(started_by: params[:started_by])
         if conversation.save
@@ -27,6 +29,18 @@ class API::V1::ConversationsController < API::V1::BaseApiController
     end
   end
 
+  def post_message
+    conversation_id = URI(request.fullpath).path.split('/').last
+    if Conversation.exists?(id: conversation_id)
+    else
+      render :json => {
+               code: 400,
+               message: '400 Bad Request',
+               description: "Conversation with id '#{conversation_id}' does not exist"
+           }, :status => 400
+    end
+  end
+
   def index
     render json: Conversation.all, each_serializer: ConversationSerializer
   end
@@ -44,11 +58,17 @@ class API::V1::ConversationsController < API::V1::BaseApiController
   end
 
   private
-  def raw_conversation_params
+  def new_conversation_params
     params.require(:conversation).require(:started_by)
     params.require(:conversation).require(:recipient_ids)
     params.require(:conversation).require(:message)
     params.require(:conversation).permit(:started_by, :message, :recipient_ids => [])
+  end
+
+  def new_conversation_message_params
+    params.require(:conversation).require(:sender_id)
+    params.require(:conversation).require(:message)
+    params.require(:conversation).permit(:sender_id, :message)
   end
 
 end
