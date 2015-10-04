@@ -4,30 +4,30 @@ RailsMessagingRestApi::Application.routes.draw do
     scope '/v1', module: 'v1', defaults: {format: 'json'} do
 
       scope '/sessions' do
-        get '/' => 'sessions#index'
+        get '/' => 'sessions#index', as: 'get_authorization_token_using_basic_auth'
       end
 
       scope '/users' do
-        get '/' => 'users#index'
-        post '/' => 'users#create'
+        get '/' => 'users#index', as: 'get_all_users'
+        post '/' => 'users#create', as: 'create_new_user'
         scope '/:user_id' do
-          get '/' => 'users#show'
+          get '/' => 'users#show', as: 'get_user_by_id'
           scope '/conversations' do
-            get '/' => 'users#show_conversations'
+            get '/' => 'users#show_conversations', as: 'get_user_conversations_by_user_id'
           end
         end
       end
 
       scope '/conversations' do
-        get '/' => 'conversations#index'
-        post '/' => 'conversations#create'
+        get '/' => 'conversations#index', as: 'get_all_conversations'
+        post '/' => 'conversations#create', as: 'create_new_conversation'
         scope '/:conversation_id' do
-          get '/' => 'conversations#show'
+          get '/' => 'conversations#show', as: 'get_conversation_by_id'
           scope '/messages' do
-            get '/' => 'conversations#show_messages'
+            get '/' => 'conversations#show_messages', as: 'get_conversation_messages_by_conversation_id'
           end
           scope '/users' do
-            get '/' => 'conversations#show_users'
+            get '/' => 'conversations#show_users', as: 'get_conversation_users_by_conversation_id'
           end
         end
       end
@@ -35,7 +35,7 @@ RailsMessagingRestApi::Application.routes.draw do
     end
   end
 
-  root 'welcome#index'
+  root 'root#get_all_endpoint_categories_supported_by_api'
 
   match '/400' => 'application#bad_request', via: :all
   match '/404' => 'application#not_found', via: :all
