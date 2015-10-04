@@ -78,6 +78,8 @@ class UsersFlowsTest < ActionDispatch::IntegrationTest
     get "/api/v1/users/#{user_id}/conversations", nil, {'X-Api-Key': @auth_token}
     get_json_response = ActiveSupport::JSON.decode response.body
 
+    puts get_json_response
+
     assert_equal user_id, get_json_response['data']['id']
     assert_not_nil get_json_response['data']['relationships']['conversations']
     assert_not_empty get_json_response['data']['relationships']['conversations']['data']
