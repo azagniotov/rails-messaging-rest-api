@@ -46,13 +46,24 @@ class ConversationsFlowsTest < ActionDispatch::IntegrationTest
     assert_equal @conversation_json_response['data']['id'], get_json_response['data']['id']
     assert_equal '200', response.code
   end
-  
+
   test 'should get all conversations' do
     get '/api/v1/conversations', nil, {'X-Api-Key': @auth_token}
     get_json_response = ActiveSupport::JSON.decode response.body
 
     assert_equal @conversation_json_response['data']['id'], get_json_response['data'][0]['id']
     assert_equal '200', response.code
+  end
+
+  test 'should get empty conversation users by conversation id' do
+    conversation_id = @conversation_json_response['data']['id']
+    get "/api/v1/conversations/#{conversation_id}/users", nil, {'X-Api-Key': @auth_token}
+    get_json_response = ActiveSupport::JSON.decode response.body
+
+    assert_equal conversation_id, get_json_response['data']['id']
+    assert_not_nil get_json_response['data']['relationships']['users']
+    assert_not_empty get_json_response['data']['relationships']['users']['data']
+    assert_equal @user_id, get_json_response['data']['relationships']['users']['data'][0]['id'].to_s
   end
 
 end

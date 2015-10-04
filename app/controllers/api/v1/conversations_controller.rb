@@ -40,7 +40,7 @@ class API::V1::ConversationsController < API::V1::BaseApiController
   end
 
   def show_users
-
+    render json: Conversation.find(params[:conversation_id]), serializer: ConversationWithUsersSerializer
   end
 
   private
