@@ -4,7 +4,7 @@ class UsersFlowsTest < ActionDispatch::IntegrationTest
     @name = 'Alex'
     @email = 'yay@gmail.com'
     @password = '54321'
-    post '/api/v1/users', :user => { :name => @name, :email => @email, :password => @password }
+    post '/api/v1/users', :user => {:name => @name, :email => @email, :password => @password}
     @create_user_json_response = ActiveSupport::JSON.decode response.body
     assert_not_nil @create_user_json_response
     assert_equal '201', response.code
@@ -73,7 +73,7 @@ class UsersFlowsTest < ActionDispatch::IntegrationTest
 
   test 'should response with user conversations by user id' do
     user_id = @create_user_json_response['data']['id']
-    post '/api/v1/conversations', {:conversation => {:started_by => user_id, :recipient_ids => [8, 9] }}, {'X-Api-Key': @auth_token}
+    post '/api/v1/conversations', {:conversation => {:started_by => user_id, :message => 'Message', :recipient_ids => [8, 9]}}, {'X-Api-Key': @auth_token}
 
     get "/api/v1/users/#{user_id}/conversations", nil, {'X-Api-Key': @auth_token}
     get_json_response = ActiveSupport::JSON.decode response.body
@@ -84,7 +84,7 @@ class UsersFlowsTest < ActionDispatch::IntegrationTest
   end
 
   test 'should respond with error JSON when new user email already exists' do
-    post '/api/v1/users', :user => { :name => @name, :email => @email, :password => @password }
+    post '/api/v1/users', :user => {:name => @name, :email => @email, :password => @password}
     error_json_response = ActiveSupport::JSON.decode response.body
 
     assert_not_nil error_json_response
@@ -93,7 +93,7 @@ class UsersFlowsTest < ActionDispatch::IntegrationTest
   end
 
   test 'should respond with error JSON when new user request has missing param' do
-    post '/api/v1/users', :user => { :email => @email, :password => @password }
+    post '/api/v1/users', :user => {:email => @email, :password => @password}
     error_json_response = ActiveSupport::JSON.decode response.body
 
     assert_not_nil error_json_response
@@ -102,7 +102,7 @@ class UsersFlowsTest < ActionDispatch::IntegrationTest
   end
 
   test 'should respond with error JSON when new user request contains unexpected param' do
-    post '/api/v1/users', :user => { :name => @name, :email => @email, :password => @password, :unexpected => 'param' }
+    post '/api/v1/users', :user => {:name => @name, :email => @email, :password => @password, :unexpected => 'param'}
     error_json_response = ActiveSupport::JSON.decode response.body
 
     assert_not_nil error_json_response

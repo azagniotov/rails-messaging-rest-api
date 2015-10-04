@@ -6,10 +6,10 @@ class API::V1::UsersController < API::V1::BaseApiController
     user = User.new(raw_user_params)
     if User.exists?(email: user.email)
       render :json => {
-             code: 400,
-             message: '400 Bad Request',
-             description: "User with email '#{user.email}' is already registered"
-         }, :status => 400
+                 code: 400,
+                 message: '400 Bad Request',
+                 description: "User with email '#{user.email}' is already registered"
+             }, :status => 400
     else
       if user.save
         render json: user, serializer: UserSerializer, status: 201

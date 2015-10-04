@@ -27,7 +27,7 @@ class User < ActiveRecord::Base
   end
 
   def generate_auth_token
-    SecureRandom.uuid.gsub(/\-/,'')
+    SecureRandom.uuid.gsub(/\-/, '')
   end
 
   def encrypt_password

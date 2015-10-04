@@ -3,7 +3,7 @@ class SessionsFlowsTest < ActionDispatch::IntegrationTest
   def setup
     @email = 'yay@gmail.com'
     @password = '54321'
-    post '/api/v1/users', :user => { :name => 'Alex', :email => @email, :password => @password }
+    post '/api/v1/users', :user => {:name => 'Alex', :email => @email, :password => @password}
     assert_not_nil ActiveSupport::JSON.decode response.body
 
     @basic = ActionController::HttpAuthentication::Basic
