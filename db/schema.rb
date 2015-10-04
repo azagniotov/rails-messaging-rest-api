@@ -14,38 +14,38 @@
 ActiveRecord::Schema.define(version: 20151002190816) do
 
   create_table "conversation_messages", force: :cascade do |t|
-    t.integer "conversation_id"
-    t.integer "message_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.integer  "conversation_id"
+    t.integer  "message_id"
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
   end
 
   create_table "conversation_users", force: :cascade do |t|
-    t.integer "conversation_id"
-    t.integer "user_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.integer  "conversation_id"
+    t.integer  "user_id"
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
   end
 
   create_table "conversations", force: :cascade do |t|
-    t.integer "started_by"
+    t.integer  "started_by"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
   create_table "messages", force: :cascade do |t|
-    t.integer "sender_id"
-    t.text "text"
+    t.integer  "sender_id"
+    t.text     "text"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
   create_table "users", force: :cascade do |t|
-    t.string "name"
-    t.string "email"
-    t.string "password"
-    t.string "salt"
-    t.string "auth_token"
+    t.string   "name"
+    t.string   "email"
+    t.string   "password"
+    t.string   "salt"
+    t.string   "auth_token"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
