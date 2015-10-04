@@ -4,7 +4,7 @@ class ConversationWithMessagesSerializer < ActiveModel::Serializer
 
   def messages
     object.messages.as_json(
-        only: [:id, :sender_id, :text]
+        only: [:id, :sender_id, :text, :created_at]
     )
   end
 end

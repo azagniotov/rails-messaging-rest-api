@@ -32,6 +32,12 @@ RailsMessagingRestApi::Application.routes.draw do
         end
       end
 
+      scope '/messages' do
+        scope '/:message_id' do
+          get '/' => 'messages#show', as: 'get_message_by_id'
+        end
+      end
+
     end
   end
 
