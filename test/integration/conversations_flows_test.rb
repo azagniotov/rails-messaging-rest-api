@@ -19,6 +19,12 @@ class ConversationsFlowsTest < ActionDispatch::IntegrationTest
     @conversation_json_response = ActiveSupport::JSON.decode response.body
   end
 
+  def teardown
+    User.delete_all
+    Message.delete_all
+    Conversation.delete_all
+  end
+
   test 'should create new conversation when all params are valid' do
     assert_equal "#{@user_id}", @conversation_json_response['data']['attributes']['started_by'].to_s
     assert_equal '/api/v1/conversations/1', @conversation_json_response['data']['attributes']['links']['self']
@@ -33,18 +39,20 @@ class ConversationsFlowsTest < ActionDispatch::IntegrationTest
     assert_equal '400', response.code
   end
 
+  test 'should get conversation by id' do
+    get "/api/v1/conversations/#{@conversation_json_response['data']['id']}", nil, {'X-Api-Key': @auth_token}
+    get_json_response = ActiveSupport::JSON.decode response.body
+
+    assert_equal @conversation_json_response['data']['id'], get_json_response['data']['id']
+    assert_equal '200', response.code
+  end
+  
   test 'should get all conversations' do
     get '/api/v1/conversations', nil, {'X-Api-Key': @auth_token}
     get_json_response = ActiveSupport::JSON.decode response.body
 
     assert_equal @conversation_json_response['data']['id'], get_json_response['data'][0]['id']
     assert_equal '200', response.code
-  end
-
-  def teardown
-    User.delete_all
-    Message.delete_all
-    Conversation.delete_all
   end
 
 end
