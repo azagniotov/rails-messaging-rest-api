@@ -32,6 +32,18 @@ class API::V1::ConversationsController < API::V1::BaseApiController
   def post_message
     conversation_id = URI(request.fullpath).path.split('/').last
     if Conversation.exists?(id: conversation_id)
+      params = new_conversation_message_params
+      if User.exists?(id: params[:sender_id])
+        message = Message.create(sender_id: params[:sender_id], text: params[:message])
+        ConversationMessage.create(conversation: Conversation.find(conversation_id), message: message)
+        render json: message, serializer: MessageSerializer, status: 201
+      else
+        render :json => {
+                   code: 400,
+                   message: '400 Bad Request',
+                   description: "User with id '#{params[:sender_id]}' does not exist"
+               }, :status => 400
+      end
     else
       render :json => {
                code: 400,
