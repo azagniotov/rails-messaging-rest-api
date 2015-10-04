@@ -8,7 +8,7 @@ class API::V1::ConversationsController < API::V1::BaseApiController
         if conversation.save
           ConversationUser.create(user: User.find(params[:started_by]), conversation: conversation)
 
-          message = Message.new(sender_id: params[:started_by], text: params[:text])
+          message = Message.new(sender_id: params[:started_by], text: params[:message])
           ConversationMessage.create(conversation: conversation, message: message)
 
           users = User.where(id: params[:recipient_ids])
@@ -36,7 +36,7 @@ class API::V1::ConversationsController < API::V1::BaseApiController
   end
 
   def show_messages
-
+    render json: Conversation.find(params[:conversation_id]), serializer: ConversationWithMessagesSerializer
   end
 
   def show_users
