@@ -1,0 +1,28 @@
+curl -X POST http://localhost:3000/api/v1/users -d '{"user": {"email": "1@gmail.com", "password": "123456", "name": "alex"}}' -H "Content-Type: application/json"
+curl -u 1@gmail.com:123456 http://localhost:3000/api/v1/sessions
+
+curl -H "X-Api-Key: 14e0659ce56f4048a0f0ae1f4dcbffd5" -H "Content-Type: application/json" http://localhost:3000/api/v1/users
+curl -H "X-Api-Key: 14e0659ce56f4048a0f0ae1f4dcbffd5" -H "Content-Type: application/json" http://localhost:3000/api/v1/users/1
+curl -H "X-Api-Key: 14e0659ce56f4048a0f0ae1f4dcbffd5" -H "Content-Type: application/json" http://localhost:3000/api/v1/users/1/conversations
+
+
+curl -X POST http://localhost:3000/api/v1/conversations -d '{"conversation": {"started_by": "1", "message": "Hello, this is me!", "recipient_ids": ["2", "3", "4", "5"]}}' \
+-H "Content-Type: application/json" \
+-H "X-Api-Key: 14e0659ce56f4048a0f0ae1f4dcbffd5"
+
+
+curl -X POST http://localhost:3000/api/v1/users -d '{"user": {"email": "2@gmail.com", "password": "54321", "name": "jane"}}' -H "Content-Type: application/json"
+
+
+curl -X POST http://localhost:3000/api/v1/conversations/1/users -d '{"conversation": {"user_id": "2"}}' \
+-H "Content-Type: application/json" \
+-H "X-Api-Key: 14e0659ce56f4048a0f0ae1f4dcbffd5"
+
+
+curl -H "X-Api-Key: 14e0659ce56f4048a0f0ae1f4dcbffd5" -H "Content-Type: application/json" http://localhost:3000/api/v1/conversations/1
+curl -H "X-Api-Key: 14e0659ce56f4048a0f0ae1f4dcbffd5" -H "Content-Type: application/json" http://localhost:3000/api/v1/conversations/1/users
+curl -H "X-Api-Key: 14e0659ce56f4048a0f0ae1f4dcbffd5" -H "Content-Type: application/json" http://localhost:3000/api/v1/conversations/1/messages
+
+
+
+
