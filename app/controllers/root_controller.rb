@@ -14,6 +14,7 @@ class RootController < ApplicationController
     spec = route.path.spec.to_s
     path = spec.gsub(/\(\.:format\)/, '')
     resource = path.split('/').first(4).last
+    version = path.split('/').first(3).last
 
     if @available_endpoints[resource].nil?
       @available_endpoints[resource] = Array.new
@@ -22,9 +23,9 @@ class RootController < ApplicationController
     method = %W{ GET POST PUT PATCH DELETE }.grep(route.verb).first.to_sym
     path_param = spec.gsub(/\(\.:format\)/, '').match(/:[a-zA-Z_]+/)
     if path_param.nil?
-      @available_endpoints[resource] << { name: route.name, method: method, path: path }
+      @available_endpoints[resource] << { version: version, name: route.name, method: method, path: path }
     else
-      @available_endpoints[resource] << { name: route.name, method: method, path: path, path_param: path_param.to_s.gsub(/:+/, '') }
+      @available_endpoints[resource] << { version: version, name: route.name, method: method, path: path, path_param: path_param.to_s.gsub(/:+/, '') }
     end
   end
 end
