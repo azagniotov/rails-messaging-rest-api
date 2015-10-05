@@ -186,10 +186,10 @@ Currently there are following API resources:
 
 #### User
 
-* [Create new user](#create-new-user)
-* [List user by id](#list-user-by-id)
-* [List all users](#list-all-users)
-* [List user conversations by user id](#list-user-conversations-by-user-id)
+1. [Create new user](#create-new-user)
+2. [List user by id](#list-user-by-id)
+3. [List all users](#list-all-users)
+4. [List user conversations by user id](#list-user-conversations-by-user-id)
 
 ##### Create new user
 
@@ -280,6 +280,15 @@ Response
 ```
 
 #### Conversation
+
+1. [Create new conversation](#create-new-conversation)
+2. [Add user to conversation](#add-user-to-conversation)
+3. [Post new message to conversation](#post-new-message-to-conversation)
+4. [List all conversations](#list-all-conversations)
+5. [List conversation by id](#list-conversation-by-id)
+6. [List conversation messages by conversation id](#list-conversation-messages-by-conversation-id)
+7. [List conversation users by conversation id](#list-conversation-users-by-conversation-id)
+
 
 ##### Create new conversation
 
@@ -448,6 +457,8 @@ Response
 
 
 #### Message
+
+1. [List message by id](#list-message-by-id)
 
 ##### List message by id
 
