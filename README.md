@@ -186,6 +186,11 @@ Currently there are following API resources:
 
 #### User
 
+* [Create new user](#create-new-user)
+* [List user by id](#list-user-by-id)
+* [List all users](#list-all-users)
+* [List user conversations by user id](#list-user-conversations-by-user-id)
+
 ##### Create new user
 
 ```
