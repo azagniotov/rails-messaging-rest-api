@@ -51,7 +51,7 @@ class API::V1::ConversationsController < API::V1::BaseApiController
         if User.exists?(id: params[:user_id])
           user = User.find(params[:user_id])
           ConversationUser.create(user: user, conversation: Conversation.find(conversation_id))
-          render json: user, serializer: UserSerializer, status: 201
+          render json: user, serializer: UserWithConversationsSerializer, status: 201
         else
           render_error_as_json(400, 'Bad Request', "User with id '#{params[:user_id]}' does not exist")
         end

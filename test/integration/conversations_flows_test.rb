@@ -111,7 +111,7 @@ class ConversationsFlowsTest < ActionDispatch::IntegrationTest
     assert_equal '400', response.code
   end
 
-  test 'should add new conversation user to existing conversation' do
+  test 'should add new user to existing conversation' do
     post '/api/v1/users', :user => {:name => @name, :email => 'something@gmail.com', :password => @password}
     create_user_json_response = ActiveSupport::JSON.decode response.body
     new_user_id = create_user_json_response['data']['id']
@@ -120,6 +120,7 @@ class ConversationsFlowsTest < ActionDispatch::IntegrationTest
     new_user_json_response = ActiveSupport::JSON.decode response.body
 
     assert_equal 'users', new_user_json_response['data']['type']
+    assert_not_empty new_user_json_response['data']['relationships']['conversations']['data']
     assert_equal new_user_id, new_user_json_response['data']['id']
 
     conversation = Conversation.find(@conversation_id)
