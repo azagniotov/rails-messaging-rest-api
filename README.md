@@ -2,7 +2,7 @@
 
 Was created with love using `Ruby v2.2.3` and `Rails v4.2.4`
 
-The API allows to perform the following actions:
+The API allows to perform the following operations:
 
 1. Create and list users
 2. Create new conversations with users
@@ -12,11 +12,10 @@ The API allows to perform the following actions:
 6. View all users in a conversation
 7. View specific message
 
-To run the app locally use `bundle install` and `rails server` commands
-
 
 ## Table of contents
 
+* [Running](#running)
 * [Current Version](#current-version)
 * [Schema](#schema)
 * [Parameters](#parameters)
@@ -28,6 +27,11 @@ To run the app locally use `bundle install` and `rails server` commands
 * [Design Decisions & Assumptions](#design-decisions-assumptions)
 * [Future Enhancements](#future-enhancements)
 
+### Running
+
+1. To run the app locally use `bundle install` and `rails server` commands
+2. To run the tests use `rake test` command
+3. Run `rake db:reseed` to drop, create, migrate then seed the development database
 
 ### Current Version
 
@@ -39,7 +43,7 @@ All API access is over `HTTP` and accessed from the `http://localhost:3000/api/v
 
 ### Parameters
 
-All parameters taken by some API methods are all __required__ parameters, i.e.: there are not API methods that take optional parameters. For `POST` requests, parameters not included in the URL should be encoded as JSON with a `Content-Type` of `application/json`
+All parameters taken by some API endpoints are all __required__ parameters, i.e.: there are no API endpoints that take optional parameters. For `POST` requests, parameters that are not included in the URL should be encoded as JSON with a `Content-Type` of `application/json`
 
 ### Root Endpoint
 
@@ -127,7 +131,7 @@ Requests that require authentication will return `401 Unauthorized` in case of f
 
 ##### Basic Authentication
 
-To retrieve API authentication token, client must authenticate itself using HTTP basic authentication by making `GET` request to `/api/v1/sessions` using existing credentials: 
+To retrieve API authentication token, client must authenticate itself using HTTP basic authentication by making `GET` request to `/api/v1/sessions` using valid credentials: 
 
 ```
 curl -u 1@gmail.com:123456 http://localhost:3000/api/v1/sessions
@@ -244,6 +248,171 @@ Response
 
 
 #### Conversation
+
+##### Create new conversation
+
+```
+POST /api/v1/conversations
+```
+Parameters
+
+| Name			| Type 		| Description		|
+|---			|---		|---				|
+| started_by 	| string	| Existing user id	|
+| message 		| string	| Message text		|
+| recipient_ids	| array		| Existing user ids	|
+
+Request
+
+```
+curl -X POST http://localhost:3000/api/v1/conversations \
+-d '{"conversation": {"started_by": "1", "message": "Hello, this is me!", "recipient_ids": ["2", "3", "4", "5"]}}' \
+-H "Content-Type: application/json" \
+-H "X-Api-Key: 14e0659ce56f4048a0f0ae1f4dcbffd5"
+```
+
+Response
+
+```
+{"data":{"id":"1","type":"conversations","attributes":{"started_by":1,"links":{"self":"/api/v1/conversations/1","all":"/api/v1/conversations"}}}}
+```
+
+
+##### Add user to conversation
+
+```
+POST /api/v1/conversations/:conversation_id/users
+```
+Parameters
+
+| Name			| Type 		| Description		|
+|---			|---		|---				|
+| user_id 		| string	| Existing user id	|
+
+Request
+
+```
+curl -X POST http://localhost:3000/api/v1/conversations/1/users \
+-d '{"conversation": {"user_id": "2"}}' \
+-H "Content-Type: application/json" \
+-H "X-Api-Key: 14e0659ce56f4048a0f0ae1f4dcbffd5"
+```
+
+Response
+
+```
+{"data":{"id":"2","type":"users","attributes":{"name":"alex","email":"1@gmail.com"},"relationships":{"conversations":{"data":[{"id":1,"started_by":1}]}}}}
+```
+
+##### Post new message to conversation
+
+```
+POST /api/v1/conversations/:conversation_id/messages
+```
+Parameters
+
+| Name			| Type 		| Description		|
+|---			|---		|---				|
+| sender_id 	| string	| Existing user id	|
+| message 		| string	| Message text		|
+
+Request
+
+```
+curl -X POST http://localhost:3000/api/v1/conversations/1/messages \
+-d '{"conversation": {"sender_id": "1", "message": "Hello, this is me again!"}}' \
+-H "Content-Type: application/json" \
+-H "X-Api-Key: 14e0659ce56f4048a0f0ae1f4dcbffd5"
+```
+
+Response
+
+```
+{"data":{"id":"3","type":"messages","attributes":{"sender_id":1,"text":"Hello, this is me again!","created_at":"2015-10-05T19:40:53.633Z","links":{"self":"/api/v1/messages/3"}}}}
+```
+
+##### List all conversations
+
+```
+GET /api/v1/conversations
+```
+
+Request
+
+```
+curl \
+-H "X-Api-Key: 14e0659ce56f4048a0f0ae1f4dcbffd5" \
+-H "Content-Type: application/json" http://localhost:3000/api/v1/conversations
+```
+
+Response
+
+```
+{"data":[{"id":"1","type":"conversations","attributes":{"started_by":1,"links":{"self":"/api/v1/conversations/1","all":"/api/v1/conversations"}}},{"id":"2","type":"conversations","attributes":{"started_by":2,"links":{"self":"/api/v1/conversations/2","all":"/api/v1/conversations"}}}]}
+```
+
+##### List conversation by id
+
+```
+GET /api/v1/conversations/:conversation_id
+```
+
+Request
+
+```
+curl \
+-H "X-Api-Key: 14e0659ce56f4048a0f0ae1f4dcbffd5" \
+-H "Content-Type: application/json" http://localhost:3000/api/v1/conversations/1
+```
+
+Response
+
+```
+{"data":{"id":"1","type":"conversations","attributes":{"started_by":1,"links":{"self":"/api/v1/conversations/1","all":"/api/v1/conversations"}}}}
+```
+
+
+##### List conversation messages by conversation id
+
+```
+GET /api/v1/conversations/:conversation_id/messages
+```
+
+Request
+
+```
+curl \
+-H "X-Api-Key: 14e0659ce56f4048a0f0ae1f4dcbffd5" \
+-H "Content-Type: application/json" \
+http://localhost:3000/api/v1/conversations/1/messages
+```
+
+Response
+
+```
+{"data":{"id":"1","type":"conversations","attributes":{"started_by":1},"relationships":{"messages":{"data":[{"id":1,"sender_id":1,"text":"Hello, this is me!","created_at":"2015-10-05T01:16:43.191Z"},{"id":3,"sender_id":1,"text":"Hello, this is me again!","created_at":"2015-10-05T19:40:53.633Z"}]}}}}
+```
+
+##### List conversation users by conversation id
+
+```
+GET /api/v1/conversations/:conversation_id/users
+```
+
+Request
+
+```
+curl \
+-H "X-Api-Key: 14e0659ce56f4048a0f0ae1f4dcbffd5" \
+-H "Content-Type: application/json" \
+http://localhost:3000/api/v1/conversations/1/users
+```
+
+Response
+
+```
+{"data":{"id":"1","type":"conversations","attributes":{"started_by":1},"relationships":{"users":{"data":[{"id":1,"name":"alex","email":"1@gmail.com"},{"id":2,"name":"jane","email":"2@gmail.com"},{"id":3,"name":"alex","email":"11@gmail.com"}]}}}}
+```
 
 
 #### Message
