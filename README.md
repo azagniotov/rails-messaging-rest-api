@@ -78,7 +78,7 @@ You can issue a `GET` request to the root endpoint `http://localhost:3000` to ge
 ```
 ### Client Errors
 
-There are three possible types of client errors on API calls that receive request bodies (please note that there is no validation in place for sending the wrong type of JSON values):
+There are a number of possible types of client errors on API calls that receive request bodies (please note that there is no validation in place for sending the wrong type of JSON values):
 
 ##### Sending invalid JSON will result in a `400 Bad Request` response
 ```
@@ -122,7 +122,7 @@ Where possible, API v1 strives to use appropriate HTTP verbs for each action:
 
 ### Authentication
 
-To authenticate through API `v1`, API authentication token must be provided. There are only two endpoints that do not require authentication:
+To authenticate against API `v1`, API authentication token must be provided. There are only two endpoints that do not require authentication:
 
 1. Creating a new `User`
 2. Retrieving the authentication token
