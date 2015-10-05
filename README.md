@@ -39,7 +39,8 @@ By default, all requests receive the `v1` version of the API.
 
 ### Schema
 
-All API access is over `HTTP` and accessed from the `http://localhost:3000/api/v1/`. All data is sent and received as `JSON`.
+All API access is over `HTTP` and accessed from the `http://localhost:3000/api/v1/`. 
+All data is sent and received as `JSON`. JSON responses are generated as per `http://jsonapi.org/format/` schema
 
 ### Parameters
 
@@ -142,9 +143,9 @@ Where possible, API v1 strives to use appropriate HTTP verbs for each action:
 
 | Verb		| Description  						|
 |---		|---								|
-| HEAD 		| Currently unsupported  			|
 | GET  		| Used for retrieving resources 	|
 | POST 		| Used for creating resources  		|
+| HEAD 		| Currently unsupported  			|
 | PATCH		| Currently unsupported  			|
 | PUT 		| Currently unsupported  			|
 | DELETE 	| Currently unsupported  			|
@@ -272,9 +273,6 @@ Response
 ```
 {"data":{"id":"1","type":"users","attributes":{"name":"alex","email":"1@gmail.com"},"relationships":{"conversations":{"data":[{"id":1,"started_by":1}]}}}}
 ```
-
-
-
 
 #### Conversation
 
@@ -483,8 +481,9 @@ Response
 1. Pagination for requests that return multiple items
 2. Rate limiting for requests using authentication and unauthenticated requests
 3. Ability to re-generate API authentication token
-4. Ability to update an exsiting `User`
+4. Ability to update an existing `User`
 5. List messages in a conversation by sender or recipient
 6. More thorough request fields validation
 7. OAuth2
+
 
