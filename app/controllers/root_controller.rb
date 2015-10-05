@@ -1,23 +1,30 @@
 class RootController < ApplicationController
   def get_all_endpoint_categories_supported_by_api
-    discoverable_apis = Array.new
+    @available_endpoints = Hash.new
     Rails.application.routes.routes.map do |route|
       if route.path.spec.to_s.starts_with?('/api')
-        discoverable_apis << { endpoint: endpoint(route) }
+        endpoint(route)
       end
     end
-    render json: JSON.pretty_generate(discoverable_apis)
+    render json: JSON.pretty_generate(@available_endpoints)
   end
 
   private
   def endpoint(route)
-    path = route.path.spec.to_s.gsub(/\(\.:format\)/, '')
+    spec = route.path.spec.to_s
+    path = spec.gsub(/\(\.:format\)/, '')
+    resource = path.split('/').first(4).last
+
+    if @available_endpoints[resource].nil?
+      @available_endpoints[resource] = Array.new
+    end
+
     method = %W{ GET POST PUT PATCH DELETE }.grep(route.verb).first.to_sym
-    path_param = route.path.spec.to_s.gsub(/\(\.:format\)/, '').match(/:[a-zA-Z_]+/)
+    path_param = spec.gsub(/\(\.:format\)/, '').match(/:[a-zA-Z_]+/)
     if path_param.nil?
-      { name: route.name, method: method, path: path }
+      @available_endpoints[resource] << { name: route.name, method: method, path: path }
     else
-      { name: route.name, method: method, path: path, path_param: path_param.to_s.gsub(/:+/, '') }
+      @available_endpoints[resource] << { name: route.name, method: method, path: path, path_param: path_param.to_s.gsub(/:+/, '') }
     end
   end
 end
