@@ -14,7 +14,7 @@ class RootController < ApplicationController
     spec = route.path.spec.to_s
     path = spec.gsub(/\(\.:format\)/, '')
     resource = path.split('/').first(4).last
-    version = path.split('/').first(3).last
+    version = path.split('/').first(3).last.gsub(/[v]+/, '')
 
     if @available_endpoints[resource].nil?
       @available_endpoints[resource] = Array.new
