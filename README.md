@@ -7,10 +7,12 @@ The API allows to perform the following operations:
 1. Create and list users
 2. Create new conversations with users
 3. List conversations that a certain user is part of
-4. Send a message to a conversation
-5. View all messages in a conversation
-6. View all users in a conversation
-7. View specific message
+4. Send a message to a specific conversation
+5. List all messages in a specific conversation
+6. List all users in a specific conversation
+7. List specific conversation
+8. List all conversations
+9. List specific message
 
 
 ## Table of contents
