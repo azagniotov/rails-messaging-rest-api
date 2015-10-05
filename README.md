@@ -78,7 +78,9 @@ You can issue a `GET` request to the root endpoint `http://localhost:3000` to ge
 ```
 ### Client Errors
 
-There are a number of possible types of client errors on API calls that receive request bodies (please note that there is no validation in place for sending the wrong type of JSON values):
+There are a number of possible types of client errors on API `POST` calls that receive request bodies. 
+Please note that there is no validation in place for sending the wrong type of JSON values:
+
 
 ##### Sending invalid JSON will result in a `400 Bad Request` response
 ```
@@ -98,13 +100,40 @@ Content-Length: 140
 {"code":422,"message":"422 Unprocessable Entity","description":"The server was unable to process the Request payload: 'message' is missing"}
 ```
 
-##### Trying to re-create an existing entity will result in `400 Bad Request` response
+##### Trying to re-create an existing user will result in `409 Conflict` response
 ```
 HTTP/1.1 400 Bad Request
 Content-Type: application/json; charset=utf-8
-Content-Length: 108
+Content-Length: 106
 
-{"code":400,"message":"400 Bad Request","description":"User with email '1@gmail.com' is already registered"}
+{"code":409,"message":"409 Conflict","description":"User with email '11@gmail.com' is already registered"}
+```
+
+##### Starting a conversation (or adding to existing conversation) a non-existent user id will result `404 Not Found` response
+```
+HTTP/1.1 404 Not Found
+Content-Type: application/json; charset=utf-8
+Content-Length: 88
+
+{"code":404,"message":"404 Not Found","description":"User with id '111' does not exist"}
+```
+
+##### Adding a user to non-existent conversation will result `404 Not Found` response
+```
+HTTP/1.1 404 Not Found
+Content-Type: application/json; charset=utf-8
+Content-Length: 88
+
+{"code":404,"message":"404 Not Found","description":"Conversation with id '111' does not exist"}
+```
+
+##### Adding the same user to conversation twice will result `409 Conflict` response
+```
+HTTP/1.1 404 Not Found
+Content-Type: application/json; charset=utf-8
+Content-Length: 88
+
+{"code":409,"message":"409 Conflict","description":"User with id '2' is already part of conversation id '1'"}
 ```
 
 ### HTTP Verbs

@@ -90,7 +90,7 @@ class UsersFlowsTest < ActionDispatch::IntegrationTest
 
     assert_not_nil error_json_response
     assert_equal "User with email '#{@email}' is already registered", error_json_response['description']
-    assert_equal '400', response.code
+    assert_equal '409', response.code
   end
 
   test 'should respond with error JSON when new user request has missing param' do

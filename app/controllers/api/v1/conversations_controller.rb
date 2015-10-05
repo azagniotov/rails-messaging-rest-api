@@ -20,7 +20,7 @@ class API::V1::ConversationsController < API::V1::BaseApiController
           render json: conversation, serializer: ConversationSerializer, status: 201
         end
       else
-        render_error_as_json(400, 'Bad Request', "User with id '#{params[:started_by]}' does not exist")
+        render_error_as_json(404, 'Not Found', "User with id '#{params[:started_by]}' does not exist")
       end
     end
   end
@@ -34,10 +34,10 @@ class API::V1::ConversationsController < API::V1::BaseApiController
         ConversationMessage.create(conversation: Conversation.find(conversation_id), message: message)
         render json: message, serializer: MessageSerializer, status: 201
       else
-        render_error_as_json(400, 'Bad Request', "User with id '#{params[:sender_id]}' is not part of conversation id '#{conversation_id}'")
+        render_error_as_json(404, 'Not Found', "User with id '#{params[:sender_id]}' is not part of conversation id '#{conversation_id}'")
       end
     else
-      render_error_as_json(400, 'Bad Request', "Conversation with id '#{conversation_id}' does not exist")
+      render_error_as_json(404, 'Not Found', "Conversation with id '#{conversation_id}' does not exist")
     end
   end
 
@@ -46,18 +46,18 @@ class API::V1::ConversationsController < API::V1::BaseApiController
     if Conversation.exists?(id: conversation_id)
       params = new_conversation_user_params
       if ConversationUser.exists?(conversation_id: conversation_id, user_id: params[:user_id])
-        render_error_as_json(400, 'Bad Request', "User with id '#{params[:user_id]}' is already part of conversation id '#{conversation_id}'")
+        render_error_as_json(409, 'Conflict', "User with id '#{params[:user_id]}' is already part of conversation id '#{conversation_id}'")
       else
         if User.exists?(id: params[:user_id])
           user = User.find(params[:user_id])
           ConversationUser.create(user: user, conversation: Conversation.find(conversation_id))
           render json: user, serializer: UserWithConversationsSerializer, status: 201
         else
-          render_error_as_json(400, 'Bad Request', "User with id '#{params[:user_id]}' does not exist")
+          render_error_as_json(404, 'Not Found', "User with id '#{params[:user_id]}' does not exist")
         end
       end
     else
-      render_error_as_json(400, 'Bad Request', "Conversation with id '#{conversation_id}' does not exist")
+      render_error_as_json(404, 'Not Found', "Conversation with id '#{conversation_id}' does not exist")
     end
   end
 

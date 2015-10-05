@@ -38,7 +38,7 @@ class ConversationsFlowsTest < ActionDispatch::IntegrationTest
 
     assert_not_nil error_json_response
     assert_equal "User with id '123456' does not exist", error_json_response['description']
-    assert_equal '400', response.code
+    assert_equal '404', response.code
   end
 
   test 'should not post new conversation message when conversation does not exist' do
@@ -47,7 +47,7 @@ class ConversationsFlowsTest < ActionDispatch::IntegrationTest
 
     assert_not_nil error_json_response
     assert_equal "Conversation with id '88888888' does not exist", error_json_response['description']
-    assert_equal '400', response.code
+    assert_equal '404', response.code
   end
 
   test 'should not post new conversation message when sender id does not exist' do
@@ -56,7 +56,7 @@ class ConversationsFlowsTest < ActionDispatch::IntegrationTest
 
     assert_not_nil error_json_response
     assert_equal "User with id '123456' is not part of conversation id '#{@conversation_id}'", error_json_response['description']
-    assert_equal '400', response.code
+    assert_equal '404', response.code
   end
 
   test 'should not post new conversation message when "sender_id" param does not exist' do
@@ -90,7 +90,7 @@ class ConversationsFlowsTest < ActionDispatch::IntegrationTest
 
     assert_not_nil error_json_response
     assert_equal "Conversation with id '88888888' does not exist", error_json_response['description']
-    assert_equal '400', response.code
+    assert_equal '404', response.code
   end
 
   test 'should not add new conversation user to existing conversation when user id does not exist' do
@@ -99,7 +99,7 @@ class ConversationsFlowsTest < ActionDispatch::IntegrationTest
 
     assert_not_nil error_json_response
     assert_equal "User with id '123456' does not exist", error_json_response['description']
-    assert_equal '400', response.code
+    assert_equal '404', response.code
   end
 
   test 'should not add new conversation user to existing conversation when the user already part of it' do
@@ -108,7 +108,7 @@ class ConversationsFlowsTest < ActionDispatch::IntegrationTest
 
     assert_not_nil error_json_response
     assert_equal "User with id '#{@user_id}' is already part of conversation id '#{@conversation_id}'", error_json_response['description']
-    assert_equal '400', response.code
+    assert_equal '409', response.code
   end
 
   test 'should add new user to existing conversation' do
