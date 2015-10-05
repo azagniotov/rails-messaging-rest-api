@@ -41,6 +41,26 @@ class API::V1::ConversationsController < API::V1::BaseApiController
     end
   end
 
+  def add_user
+    conversation_id = URI(request.fullpath).path.split('/').last(2)[0]
+    if Conversation.exists?(id: conversation_id)
+      params = new_conversation_user_params
+      if ConversationUser.exists?(conversation_id: conversation_id, user_id: params[:user_id])
+        render_error_as_json(400, 'Bad Request', "User with id '#{params[:user_id]}' is already part of conversation id '#{conversation_id}'")
+      else
+        if User.exists?(id: params[:user_id])
+          user = User.find(params[:user_id])
+          ConversationUser.create(user: user, conversation: Conversation.find(conversation_id))
+          render json: user, serializer: UserSerializer, status: 201
+        else
+          render_error_as_json(400, 'Bad Request', "User with id '#{params[:user_id]}' does not exist")
+        end
+      end
+    else
+      render_error_as_json(400, 'Bad Request', "Conversation with id '#{conversation_id}' does not exist")
+    end
+  end
+
   def index
     render json: Conversation.all, each_serializer: ConversationSerializer
   end
@@ -68,6 +88,11 @@ class API::V1::ConversationsController < API::V1::BaseApiController
   def new_conversation_message_params
     params.require(:conversation).require(:sender_id)
     params.require(:conversation).permit(:sender_id, :message)
+  end
+
+  def new_conversation_user_params
+    params.require(:conversation).require(:user_id)
+    params.require(:conversation).permit(:user_id)
   end
 
 end

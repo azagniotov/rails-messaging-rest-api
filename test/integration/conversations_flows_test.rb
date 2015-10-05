@@ -84,6 +84,50 @@ class ConversationsFlowsTest < ActionDispatch::IntegrationTest
     assert_equal @user_id, new_message_json_response['data']['attributes']['sender_id'].to_s
   end
 
+  test 'should not add new conversation user when conversation does not exist' do
+    post '/api/v1/conversations/88888888/users', {:conversation => {:user_id => 123456 }}, {'X-Api-Key': @auth_token}
+    error_json_response = ActiveSupport::JSON.decode response.body
+
+    assert_not_nil error_json_response
+    assert_equal "Conversation with id '88888888' does not exist", error_json_response['description']
+    assert_equal '400', response.code
+  end
+
+  test 'should not add new conversation user to existing conversation when user id does not exist' do
+    post "/api/v1/conversations/#{@conversation_id}/users", {:conversation => {:user_id => 123456 }}, {'X-Api-Key': @auth_token}
+    error_json_response = ActiveSupport::JSON.decode response.body
+
+    assert_not_nil error_json_response
+    assert_equal "User with id '123456' does not exist", error_json_response['description']
+    assert_equal '400', response.code
+  end
+
+  test 'should not add new conversation user to existing conversation when the user already part of it' do
+    post "/api/v1/conversations/#{@conversation_id}/users", {:conversation => {:user_id => @user_id }}, {'X-Api-Key': @auth_token}
+    error_json_response = ActiveSupport::JSON.decode response.body
+
+    assert_not_nil error_json_response
+    assert_equal "User with id '#{@user_id}' is already part of conversation id '#{@conversation_id}'", error_json_response['description']
+    assert_equal '400', response.code
+  end
+
+  test 'should add new conversation user to existing conversation' do
+    post '/api/v1/users', :user => {:name => @name, :email => 'something@gmail.com', :password => @password}
+    create_user_json_response = ActiveSupport::JSON.decode response.body
+    new_user_id = create_user_json_response['data']['id']
+
+    post "/api/v1/conversations/#{@conversation_id}/users", {:conversation => {:user_id => new_user_id }}, {'X-Api-Key': @auth_token}
+    new_user_json_response = ActiveSupport::JSON.decode response.body
+
+    assert_equal 'users', new_user_json_response['data']['type']
+    assert_equal new_user_id, new_user_json_response['data']['id']
+
+    conversation = Conversation.find(@conversation_id)
+    assert_equal 2, conversation.users.size
+    assert_includes conversation.users, User.find(@user_id)
+    assert_includes conversation.users, User.find(new_user_id)
+  end
+
   test 'should get conversation by id' do
     get "/api/v1/conversations/#{@conversation_json_response['data']['id']}", nil, {'X-Api-Key': @auth_token}
     get_json_response = ActiveSupport::JSON.decode response.body
