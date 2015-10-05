@@ -42,7 +42,7 @@ class ConversationsFlowsTest < ActionDispatch::IntegrationTest
   end
 
   test 'should not post new conversation message when conversation does not exist' do
-    post '/api/v1/conversations/88888888', {:conversation => {:sender_id => 123456, :message => @message }}, {'X-Api-Key': @auth_token}
+    post '/api/v1/conversations/88888888/messages', {:conversation => {:sender_id => 123456, :message => @message }}, {'X-Api-Key': @auth_token}
     error_json_response = ActiveSupport::JSON.decode response.body
 
     assert_not_nil error_json_response
@@ -51,16 +51,16 @@ class ConversationsFlowsTest < ActionDispatch::IntegrationTest
   end
 
   test 'should not post new conversation message when sender id does not exist' do
-    post '/api/v1/conversations/1', {:conversation => {:sender_id => 123456, :message => @message }}, {'X-Api-Key': @auth_token}
+    post "/api/v1/conversations/#{@conversation_id}/messages", {:conversation => {:sender_id => 123456, :message => @message }}, {'X-Api-Key': @auth_token}
     error_json_response = ActiveSupport::JSON.decode response.body
 
     assert_not_nil error_json_response
-    assert_equal "User with id '123456' does not exist", error_json_response['description']
+    assert_equal "User with id '123456' is not part of conversation id '#{@conversation_id}'", error_json_response['description']
     assert_equal '400', response.code
   end
 
   test 'should post new conversation message' do
-    post "/api/v1/conversations/#{@conversation_id}", {:conversation => {:sender_id => @user_id, :message => @message }}, {'X-Api-Key': @auth_token}
+    post "/api/v1/conversations/#{@conversation_id}/messages", {:conversation => {:sender_id => @user_id, :message => @message }}, {'X-Api-Key': @auth_token}
     new_message_json_response = ActiveSupport::JSON.decode response.body
 
     assert_equal 'messages', new_message_json_response['data']['type']

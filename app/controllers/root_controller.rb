@@ -5,7 +5,7 @@ class RootController < ApplicationController
       if route.path.spec.to_s.starts_with?('/api')
         path = route.path.spec.to_s.gsub(/\(\.:format\)/, '')#.gsub(/:[a-zA-Z_]+/, '1')
         method = %W{ GET POST PUT PATCH DELETE }.grep(route.verb).first.to_sym
-        discoverable_apis << { name: route.name, path: path, method: method }
+        discoverable_apis << { name: route.name, endpoint: { method: method, path: path }}
       end
     end
     render json: JSON.pretty_generate(discoverable_apis)

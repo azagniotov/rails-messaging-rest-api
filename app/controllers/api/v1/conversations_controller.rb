@@ -20,36 +20,24 @@ class API::V1::ConversationsController < API::V1::BaseApiController
           render json: conversation, serializer: ConversationSerializer, status: 201
         end
       else
-        render :json => {
-                   code: 400,
-                   message: '400 Bad Request',
-                   description: "User with id '#{params[:started_by]}' does not exist"
-               }, :status => 400
+        render_error_as_json(400, 'Bad Request', "User with id '#{params[:started_by]}' does not exist")
       end
     end
   end
 
   def post_message
-    conversation_id = URI(request.fullpath).path.split('/').last
+    conversation_id = URI(request.fullpath).path.split('/').last(2)[0]
     if Conversation.exists?(id: conversation_id)
       params = new_conversation_message_params
-      if User.exists?(id: params[:sender_id])
+      if ConversationUser.exists?(conversation_id: conversation_id, user_id: params[:sender_id])
         message = Message.create(sender_id: params[:sender_id], text: params[:message])
         ConversationMessage.create(conversation: Conversation.find(conversation_id), message: message)
         render json: message, serializer: MessageSerializer, status: 201
       else
-        render :json => {
-                   code: 400,
-                   message: '400 Bad Request',
-                   description: "User with id '#{params[:sender_id]}' does not exist"
-               }, :status => 400
+        render_error_as_json(400, 'Bad Request', "User with id '#{params[:sender_id]}' is not part of conversation id '#{conversation_id}'")
       end
     else
-      render :json => {
-               code: 400,
-               message: '400 Bad Request',
-               description: "Conversation with id '#{conversation_id}' does not exist"
-           }, :status => 400
+      render_error_as_json(400, 'Bad Request', "Conversation with id '#{conversation_id}' does not exist")
     end
   end
 
