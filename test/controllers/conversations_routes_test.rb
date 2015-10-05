@@ -15,6 +15,10 @@ class ConversationsRoutesTest < ActionController::TestCase
     assert_routing '/api/v1/conversations/1/users', {format: 'json', controller: 'api/v1/conversations', action: 'show_users', conversation_id: '1'}
   end
 
+  test 'should route to add user to conversation' do
+    assert_routing({method: 'post', path: '/api/v1/conversations/1/users'}, {format: 'json', controller: 'api/v1/conversations', action: 'add_user', conversation_id: '1'})
+  end
+
   test 'should route to create conversation' do
     assert_routing({method: 'post', path: '/api/v1/conversations'}, {format: 'json', controller: 'api/v1/conversations', action: 'create'})
   end

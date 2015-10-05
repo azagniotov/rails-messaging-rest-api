@@ -67,7 +67,6 @@ class API::V1::ConversationsController < API::V1::BaseApiController
 
   def new_conversation_message_params
     params.require(:conversation).require(:sender_id)
-    params.require(:conversation).require(:message)
     params.require(:conversation).permit(:sender_id, :message)
   end
 

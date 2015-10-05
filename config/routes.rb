@@ -29,6 +29,7 @@ RailsMessagingRestApi::Application.routes.draw do
           end
           scope '/users' do
             get '/' => 'conversations#show_users', as: 'get_conversation_users_by_conversation_id'
+            post '/' => 'conversations#add_user', as: 'add_new_user_to_conversation_by_conversation_id'
           end
         end
       end

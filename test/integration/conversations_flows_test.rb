@@ -59,8 +59,25 @@ class ConversationsFlowsTest < ActionDispatch::IntegrationTest
     assert_equal '400', response.code
   end
 
+  test 'should not post new conversation message when "sender_id" param does not exist' do
+    post "/api/v1/conversations/#{@conversation_id}/messages", {:conversation => {:message => @message }}, {'X-Api-Key': @auth_token}
+    error_json_response = ActiveSupport::JSON.decode response.body
+
+    assert_not_nil error_json_response
+    assert_equal "The server was unable to process the Request payload: 'sender_id' is missing", error_json_response['description']
+    assert_equal '422', response.code
+  end
+
   test 'should post new conversation message' do
     post "/api/v1/conversations/#{@conversation_id}/messages", {:conversation => {:sender_id => @user_id, :message => @message }}, {'X-Api-Key': @auth_token}
+    new_message_json_response = ActiveSupport::JSON.decode response.body
+
+    assert_equal 'messages', new_message_json_response['data']['type']
+    assert_equal @user_id, new_message_json_response['data']['attributes']['sender_id'].to_s
+  end
+
+  test 'should post new conversation empty message' do
+    post "/api/v1/conversations/#{@conversation_id}/messages", {:conversation => {:sender_id => @user_id }}, {'X-Api-Key': @auth_token}
     new_message_json_response = ActiveSupport::JSON.decode response.body
 
     assert_equal 'messages', new_message_json_response['data']['type']
