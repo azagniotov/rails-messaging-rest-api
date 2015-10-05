@@ -18,18 +18,10 @@ module API
       private
       def api_key_authorize!
         if !authorization_header
-          forbidden 'X-Api-Key header is not set'
+          render_error_as_json 401, 'Unauthorized', 'X-Api-Key header is not set'
         else
-          forbidden 'Api key is not valid' unless api_key_valid
+          render_error_as_json 401, 'Unauthorized', 'Api key is not valid' unless api_key_valid
         end
-      end
-
-      def forbidden(message)
-        render :json => {
-                   code: 403,
-                   message: '403 Forbidden',
-                   description: message
-               }, :status => 403
       end
 
       def authorization_header

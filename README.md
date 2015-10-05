@@ -1,16 +1,21 @@
 ## Rails Messaging RESTful API
 
+Was created with love using `Ruby v2.2.3` and `Rails v4.2.4`
+
 ### Table of contents
 
-* [API Resources](#api-resources)
+* [Resources](#resources)
 * [Current Version](#current-version)
 * [Schema](#schema)
 * [Parameters](#parameters)
 * [Root Endpoint](#root-endpoint)
 * [Client Errors](#client-errors)
 * [HTTP Verbs](#http-verbs)
+* [Authentication](#authentication)
+* [Design Decisions & Assumptions](#design-decisions-assumptions)
+* [Future Enhancements](#future-enhancements)
 
-#### API Resources
+#### Resources
 
 Currently there are following API resources:
 
@@ -25,7 +30,7 @@ By default, all requests receive the `v1` version of the API.
 
 #### Schema
 
-All API access is over `HTTP` and accessed from the `http://localhost:3000/api/v1/`. All data is sent and received as `JSON`.
+All API access is over `HTTP` and accessed from the `http://localhost:3000/api/v1/`. All data is sent and received as `JSON`. JSON responses are generated as per `http://jsonapi.org/format/`
 
 #### Parameters
 
@@ -106,31 +111,52 @@ Where possible, API v1 strives to use appropriate HTTP verbs for each action:
 | PUT 		| Currently unsupported  			|
 | DELETE 	| Currently unsupported  			|
 
+#### Authentication
 
+To authenticate through API `v1`, API authentication token must be provided. There are only two endpoints that do not require authentication:
 
+1. Creating a new `User`
+2. Retrieving the authentication token
 
+Requests that require authentication will return `401 Unauthorized` in case of failed authentication. 
 
+###### Basic Authentication
 
+To retrieve API authentication token, client must authenticate itself using HTTP basic authentication by making `GET` request to `/api/v1/sessions` using existing credentials: 
 
-#### Minimal Prerequisites
+```
+curl -u 1@gmail.com:123456 http://localhost:3000/api/v1/sessions
+```
+If authentication was successful, the API will respond with:
 
-1. Ruby v2.2.3
-2. Rails v4.2.4
+```
+{"email":"1@gmail.com","auth_token":"14e0659ce56f4048a0f0ae1f4dcbffd5"}
+```
 
+###### API Access
 
-#### Design Decisions
+To access an endpoint requiring authentication, the `X-Api-Key` HTTP header must be set
 
-1. User input submitted via API is valid, ie.: no email format or password complexity validation
-2. rake db:reseed
-3. After creation users cannot be updated
-4. API JSON responses are generated as per `http://jsonapi.org/format/`
-5. when creating new user, you must also POST the desired password. Not a good idea in real life, I am aware of that
-6. To access the API, user must provide HTTP header `X-Api-Key` with API authorization token to access all APIs except 
-creating new users (POST to `/api/v1/users/`). In case of creating a new user, the API token will be return as part of JSON response.
-7. To get the API authorization token, existing user heeds to authenticate himself using his credentials and basic 
-access authentication by submitting GET request to: `/api/v1/sessions`.
-8. On each API call I do a DB lookup to validate API auth token
-9. Model validations are only to check whether required fields are set
-10. API docs: rails g apipie:install
-11. When listing all the users, conversation or messages there is no paging in place. What ever is in DB will be listed
-12. Users are unique.y identified by email in the system
+```
+curl -H "X-Api-Key: 14e0659ce56f4048a0f0ae1f4dcbffd5" -H "Content-Type: application/json" http://localhost:3000/api/v1/users/1
+```
+
+#### Design Decisions & Assumptions
+
+1. Client requests submitted to the API are valid, ie.: there is no email format or password complexity validation in place
+2. After creation, `User` cannot be updated
+3. When creating a new `User`, you must also `POST` the desired password. Not a good idea in real life, I am aware of that
+4. On each API call requiring authentication, there is a DB lookup to validate API authentication token
+5. Model validations only to check whether required fields are set
+6. Email uniquely identifies `Users` in the system
+7. There is no pagination nor request rate limiting
+
+#### Future Enhancements
+
+1. Pagination for requests that return multiple items
+2. Rate limiting for requests using authentication and unauthenticated requests
+3. Ability to re-generate API authentication token
+4. Ability to update an exsiting `User`
+5. List messages in a conversation by sender or recipient
+6. More thorough request fields validation
+7. OAuth2

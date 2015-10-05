@@ -31,8 +31,8 @@ class UsersFlowsTest < ActionDispatch::IntegrationTest
 
     assert_not_nil json_response
     assert_equal 'X-Api-Key header is not set', json_response['description']
-    assert_equal 403, json_response['code']
-    assert_equal '403', response.code
+    assert_equal 401, json_response['code']
+    assert_equal '401', response.code
   end
 
   test 'should not get user by id when API key header value is wrong' do
@@ -41,8 +41,8 @@ class UsersFlowsTest < ActionDispatch::IntegrationTest
 
     assert_not_nil json_response
     assert_equal 'Api key is not valid', json_response['description']
-    assert_equal 403, json_response['code']
-    assert_equal '403', response.code
+    assert_equal 401, json_response['code']
+    assert_equal '401', response.code
   end
 
   test 'should get user by id' do

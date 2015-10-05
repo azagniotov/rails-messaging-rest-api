@@ -37,8 +37,8 @@ class MessagesFlowsTest < ActionDispatch::IntegrationTest
 
     assert_not_nil error_json_response
     assert_equal 'X-Api-Key header is not set', error_json_response['description']
-    assert_equal 403, error_json_response['code']
-    assert_equal '403', response.code
+    assert_equal 401, error_json_response['code']
+    assert_equal '401', response.code
   end
 
 end
