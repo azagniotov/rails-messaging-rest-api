@@ -6,15 +6,6 @@ module API
       before_action only: [:index, :create, :show, :update]
       respond_to :json
 
-      protected
-      def render_error_as_json(code, message, description)
-        render :json => {
-               code: code,
-               message: "#{code} #{message}",
-               description: description
-           }, :status => code
-      end
-
       private
       def api_key_authorize!
         if !authorization_header
