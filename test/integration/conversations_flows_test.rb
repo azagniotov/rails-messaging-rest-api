@@ -29,7 +29,10 @@ class ConversationsFlowsTest < ActionDispatch::IntegrationTest
 
   test 'should create new conversation when all params are valid' do
     assert_equal "#{@user_id}", @conversation_json_response['data']['attributes']['started_by'].to_s
-    assert_equal '/api/v1/conversations/1', @conversation_json_response['data']['attributes']['links']['self']
+    assert_equal "/api/v1/conversations/#{@conversation_id}", @conversation_json_response['data']['attributes']['links']['self']
+
+    conversation_user = ConversationUser.find_by(user_id: @user_id, conversation_id: @conversation_id)
+    assert_not_nil conversation_user
   end
 
   test 'should not create new conversation when "started_by" user id does not exist' do
