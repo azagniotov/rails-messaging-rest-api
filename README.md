@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/azagniotov/rails-messaging-rest-api.svg?branch=master)](https://travis-ci.org/azagniotov/rails-messaging-rest-api)
+
 # Rails Messaging RESTful API
 
 Was created with love using `Ruby v2.2.3` and `Rails v4.2.4`
