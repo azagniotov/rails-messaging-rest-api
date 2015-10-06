@@ -2,3 +2,10 @@ language: ruby
 
 rvm:
   - 2.2.3
+
+env:
+  global:
+    - RAILS_ENV=test
+    - DB=sqlite
+
+script: "bundle exec rake db:migrate test"
