@@ -6,14 +6,13 @@ The API allows to perform the following operations:
 
 1. Create and list users
 2. Create new conversations with users
-3. List conversations that a certain user is part of
+3. List conversations that a specific user is part of
 4. Send a message to a specific conversation
 5. List all messages in a specific conversation
 6. List all users in a specific conversation
 7. List specific conversation
 8. List all conversations
 9. List specific message
-
 
 ## Table of contents
 
@@ -31,8 +30,8 @@ The API allows to perform the following operations:
 
 ### Running
 
-1. To run the app locally use `bundle install` and `rails server` commands
-2. To run the tests use `rake test` command
+1. To run the app locally run `bundle install` followed by `rails server`
+2. To run the tests run `rake test`
 3. Run `rake db:reseed` to drop, create, migrate then seed the development database
 
 ### Current Version
@@ -41,16 +40,23 @@ By default, all requests receive the `v1` version of the API.
 
 ### Schema
 
-All API access is over `HTTP` and accessed from the `http://localhost:3000/api/v1/`. 
-All data is sent and received as `JSON`. JSON responses are generated as per `http://jsonapi.org/format/` schema
+All API access is over `HTTP` and accessed from `http://localhost:3000/api/v1/`.
+All data is sent and received as `JSON`. JSON responses are generated as per the `http://jsonapi.org/format/` schema
 
 ### Parameters
 
 All parameters taken by some API endpoints are all __required__ parameters, i.e.: there are no API endpoints that take optional parameters. For `POST` requests, parameters that are not included in the URL should be encoded as JSON with a `Content-Type` of `application/json`
 
+```
+curl -X POST http://localhost:3000/api/v1/conversations/1/users \
+-d '{"conversation": {"user_id": "2"}}' \
+-H "Content-Type: application/json" \
+-H "X-Api-Key: 14e0659ce56f4048a0f0ae1f4dcbffd5"
+```
+
 ### Root Endpoint
 
-You can issue a `GET` request to the root endpoint `http://localhost:3000` to get all the endpoint categories that the API supports. The endpoints are grouped by resource names, for example:
+You can issue a `GET` request to the root endpoint `http://localhost:3000` to get all of the endpoint categories that the API supports. The endpoints are grouped by resource names, for example:
 
 ```
 {
@@ -141,7 +147,7 @@ Content-Length: 88
 
 ### HTTP Verbs
 
-Where possible, API v1 strives to use appropriate HTTP verbs for each action:
+Where possible, API v1 strives to use the appropriate HTTP verbs for each action:
 
 | Verb		| Description  						|
 |---		|---								|
@@ -154,7 +160,7 @@ Where possible, API v1 strives to use appropriate HTTP verbs for each action:
 
 ### Authentication
 
-To authenticate against API `v1`, API authentication token must be provided. There are only two endpoints that do not require authentication:
+To authenticate against API `v1`, an API authentication token must be provided. There are only two endpoints that do not require authentication:
 
 1. Creating a new `User`
 2. Retrieving the authentication token
@@ -163,7 +169,7 @@ Requests that require authentication will return `401 Unauthorized` in case of f
 
 ##### Basic Authentication
 
-To retrieve API authentication token, client must authenticate itself using HTTP basic authentication by making `GET` request to `/api/v1/sessions` using valid credentials: 
+To retrieve API authentication token, client must authenticate itself using HTTP basic authentication by making a `GET` request to `/api/v1/sessions` using valid credentials:
 
 ```
 curl -u 1@gmail.com:123456 http://localhost:3000/api/v1/sessions
@@ -321,7 +327,7 @@ Response
 ```
 
 
-##### Add user to conversation
+##### Add a user to a conversation
 
 ```
 POST /api/v1/conversations/:conversation_id/users
@@ -347,7 +353,7 @@ Response
 {"data":{"id":"2","type":"users","attributes":{"name":"alex","email":"1@gmail.com"},"relationships":{"conversations":{"data":[{"id":1,"started_by":1}]}}}}
 ```
 
-##### Post new message to conversation
+##### Post a new message to a conversation
 
 ```
 POST /api/v1/conversations/:conversation_id/messages
@@ -394,7 +400,7 @@ Response
 {"data":[{"id":"1","type":"conversations","attributes":{"started_by":1,"links":{"self":"/api/v1/conversations/1","all":"/api/v1/conversations"}}},{"id":"2","type":"conversations","attributes":{"started_by":2,"links":{"self":"/api/v1/conversations/2","all":"/api/v1/conversations"}}}]}
 ```
 
-##### List conversation by id
+##### List conversations by id
 
 ```
 GET /api/v1/conversations/:conversation_id
