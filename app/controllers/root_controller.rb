@@ -13,8 +13,8 @@ class RootController < ApplicationController
   def endpoint(route)
     spec = route.path.spec.to_s
     path = spec.gsub(/\(\.:format\)/, '')
-    resource = path.split('/').first(4).last
-    version = path.split('/').first(3).last.gsub(/[v]+/, '')
+    resource = extract_from_path(path, '/', 4)
+    version = extract_from_path(path, '/', 3).gsub(/[v]+/, '')
 
     if @available_endpoints[resource].nil?
       @available_endpoints[resource] = Array.new
@@ -27,5 +27,11 @@ class RootController < ApplicationController
     else
       @available_endpoints[resource] << { version: version, name: route.name, method: method, path: path, path_param: path_param.to_s.gsub(/:+/, '') }
     end
+  end
+
+  def extract_from_path(subject_to_split, separator, elements_to_grab)
+    chunks = subject_to_split.split(separator)
+    first_chunks = chunks.first(elements_to_grab)
+    first_chunks.last
   end
 end

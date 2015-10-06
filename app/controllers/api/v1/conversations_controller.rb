@@ -26,7 +26,7 @@ class API::V1::ConversationsController < API::V1::BaseApiController
   end
 
   def post_message
-    conversation_id = URI(request.fullpath).path.split('/').last(2)[0]
+    conversation_id = extract_conversation_id_from_path
     if Conversation.exists?(id: conversation_id)
       params = new_conversation_message_params
       if ConversationUser.exists?(conversation_id: conversation_id, user_id: params[:sender_id])
@@ -42,7 +42,7 @@ class API::V1::ConversationsController < API::V1::BaseApiController
   end
 
   def add_user
-    conversation_id = URI(request.fullpath).path.split('/').last(2)[0]
+    conversation_id = extract_conversation_id_from_path
     if Conversation.exists?(id: conversation_id)
       params = new_conversation_user_params
       if ConversationUser.exists?(conversation_id: conversation_id, user_id: params[:user_id])
@@ -95,4 +95,10 @@ class API::V1::ConversationsController < API::V1::BaseApiController
     params.require(:conversation).permit(:user_id)
   end
 
+  def extract_conversation_id_from_path
+    path_chunks = URI(request.fullpath).path.split('/')
+    last_path_chunks = path_chunks.last(2)
+    last_path_chunks.first
+  end
 end
+
