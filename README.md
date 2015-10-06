@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/azagniotov/rails-messaging-rest-api.svg?branch=master)](https://travis-ci.org/azagniotov/rails-messaging-rest-api)
+[![License](http://img.shields.io/:license-mit-blue.svg?style=flat)](http://badges.mit-license.org)
 
 # Rails Messaging RESTful API
 
