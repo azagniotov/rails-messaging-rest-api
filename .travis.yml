@@ -8,4 +8,8 @@ env:
     - DB=sqlite
     - CODECLIMATE_REPO_TOKEN=cd13e093bb942858fc49644fc3be6ffe8dc15c4040180fd4d90b95fb218251a4
 
+addons:
+  code_climate:
+    repo_token: cd13e093bb942858fc49644fc3be6ffe8dc15c4040180fd4d90b95fb218251a4
+
 script: "bundle exec rake db:migrate test"
