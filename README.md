@@ -20,7 +20,7 @@ The API allows to perform the following operations:
 * [Current Version](#current-version)
 * [Schema](#schema)
 * [Parameters](#parameters)
-* [Root Endpoint](#root-endpoint)
+* [API Discovery](#api-discovery)
 * [Client Errors](#client-errors)
 * [HTTP Verbs](#http-verbs)
 * [Authentication](#authentication)
@@ -54,7 +54,7 @@ curl -X POST http://localhost:3000/api/v1/conversations/1/users \
 -H "X-Api-Key: 14e0659ce56f4048a0f0ae1f4dcbffd5"
 ```
 
-### Root Endpoint
+### API Discovery
 
 You can issue a `GET` request to the root endpoint `http://localhost:3000` to get all of the endpoint categories that the API supports. The endpoints are grouped by resource names, for example:
 
