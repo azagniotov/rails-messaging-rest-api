@@ -7,13 +7,13 @@ class API::V1::ConversationsController < API::V1::BaseApiController
       params = new_conversation_params
       unless User.exists?(id: params[:started_by])
         render_error_as_json(404, 'Not Found', "User with id '#{params[:started_by]}' does not exist")
-      end
-      
-      conversation = Conversation.create(started_by: params[:started_by])
-      create_conversation_users(conversation, params[:recipient_ids] << params[:started_by])
-      create_conversation_message(conversation, params[:started_by], params[:message])
+      else
+        conversation = Conversation.create(started_by: params[:started_by])
+        create_conversation_users(conversation, params[:recipient_ids] << params[:started_by])
+        create_conversation_message(conversation, params[:started_by], params[:message])
 
-      render json: conversation, serializer: ConversationSerializer, status: 201
+        render json: conversation, serializer: ConversationSerializer, status: 201
+      end
     end
   end
 
