@@ -3,13 +3,11 @@ require 'uri'
 class API::V1::ConversationsController < API::V1::BaseApiController
 
   def create
-    Conversation.transaction do
-      params = new_conversation_params
-      conversation_service = ConversationService.new
-      result = conversation_service.create_conversation(params[:started_by], params[:recipient_ids], params[:message])
+    params = new_conversation_params
+    conversation_service = ConversationService.new
+    result = conversation_service.create_conversation(params[:started_by], params[:recipient_ids], params[:message])
 
-      render_response(result, Conversation, ConversationSerializer)
-    end
+    render_response(result, Conversation, ConversationSerializer)
   end
 
   def add_user
