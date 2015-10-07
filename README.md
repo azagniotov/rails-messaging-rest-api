@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/azagniotov/rails-messaging-rest-api.svg?branch=master)](https://travis-ci.org/azagniotov/rails-messaging-rest-api)
-[![Test Coverage](https://codeclimate.com/github/azagniotov/rails-messaging-rest-api/badges/coverage.svg)](https://codeclimate.com/github/azagniotov/rails-messaging-rest-api/coverage)
 [![Code Climate](https://codeclimate.com/github/azagniotov/rails-messaging-rest-api/badges/gpa.svg)](https://codeclimate.com/github/azagniotov/rails-messaging-rest-api)
+[![Test Coverage](https://codeclimate.com/github/azagniotov/rails-messaging-rest-api/badges/coverage.svg)](https://codeclimate.com/github/azagniotov/rails-messaging-rest-api/coverage)
 [![License](http://img.shields.io/:license-mit-blue.svg?style=flat)](http://badges.mit-license.org)
 
 # Rails Messaging RESTful API
