@@ -8,11 +8,7 @@ class API::V1::ConversationsController < API::V1::BaseApiController
       conversation_service = ConversationService.new
       result = conversation_service.create_conversation(params[:started_by], params[:recipient_ids], params[:message])
 
-      if result.instance_of? Conversation
-        render json: result, serializer: ConversationSerializer, status: 201
-      else
-        render_error_as_json(result[:code], result[:message], result[:description])
-      end
+      render_response(result, Conversation, ConversationSerializer)
     end
   end
 
@@ -22,11 +18,7 @@ class API::V1::ConversationsController < API::V1::BaseApiController
     conversation_service = ConversationService.new
     result = conversation_service.add_user(conversation_id, params[:user_id])
 
-    if result.instance_of? User
-      render json: result, serializer: UserWithConversationsSerializer, status: 201
-    else
-      render_error_as_json(result[:code], result[:message], result[:description])
-    end
+    render_response(result, User, UserWithConversationsSerializer)
   end
 
   def post_message
@@ -35,11 +27,7 @@ class API::V1::ConversationsController < API::V1::BaseApiController
     conversation_service = ConversationService.new
     result = conversation_service.post_message(conversation_id, params[:sender_id], params[:message])
 
-    if result.instance_of? Message
-      render json: result, serializer: MessageSerializer, status: 201
-    else
-      render_error_as_json(result[:code], result[:message], result[:description])
-    end
+    render_response(result, Message, MessageSerializer)
   end
 
   def index
@@ -80,5 +68,13 @@ class API::V1::ConversationsController < API::V1::BaseApiController
     path_chunks = URI(request.fullpath).path.split('/')
     last_path_chunks = path_chunks.last(2)
     last_path_chunks.first
+  end
+
+  def render_response(action_result, desired_class_type, serializer_class)
+    if action_result.instance_of? desired_class_type
+      render json: action_result, serializer: serializer_class, status: 201
+    else
+      render_error_as_json(action_result[:code], action_result[:message], action_result[:description])
+    end
   end
 end
