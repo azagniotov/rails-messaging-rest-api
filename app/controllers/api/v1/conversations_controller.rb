@@ -5,49 +5,50 @@ class API::V1::ConversationsController < API::V1::BaseApiController
   def create
     Conversation.transaction do
       params = new_conversation_params
-      unless User.exists?(id: params[:started_by])
-        render_error_as_json(404, 'Not Found', "User with id '#{params[:started_by]}' does not exist")
-      else
-        conversation = Conversation.create(started_by: params[:started_by])
-        create_conversation_users(conversation, params[:recipient_ids] << params[:started_by])
-        create_conversation_message(conversation, params[:started_by], params[:message])
+      result = ConversationService.new(
+          params[:started_by],
+          params[:recipient_ids],
+          params[:message]).create_conversation
 
-        render json: conversation, serializer: ConversationSerializer, status: 201
+      if result.instance_of? Conversation
+        render json: result, serializer: ConversationSerializer, status: 201
+      else
+        render_error_as_json(result[:code], result[:message], result[:description])
       end
     end
   end
 
   def post_message
     conversation_id = extract_conversation_id_from_path
-    unless Conversation.exists?(id: conversation_id)
-      render_error_as_json(404, 'Not Found', "Conversation with id '#{conversation_id}' does not exist")
-    else
+    if Conversation.exists?(id: conversation_id)
       params = new_conversation_message_params
       if ConversationUser.exists?(conversation_id: conversation_id, user_id: params[:sender_id])
         render json: create_conversation_message(conversation_id, params[:sender_id], params[:message]), serializer: MessageSerializer, status: 201
       else
         render_error_as_json(404, 'Not Found', "User with id '#{params[:sender_id]}' is not part of conversation id '#{conversation_id}'")
       end
+    else
+      render_error_as_json(404, 'Not Found', "Conversation with id '#{conversation_id}' does not exist")
     end
   end
 
   def add_user
     conversation_id = extract_conversation_id_from_path
-    unless Conversation.exists?(id: conversation_id)
-      render_error_as_json(404, 'Not Found', "Conversation with id '#{conversation_id}' does not exist")
-    else
+    if Conversation.exists?(id: conversation_id)
       params = new_conversation_user_params
       if ConversationUser.exists?(conversation_id: conversation_id, user_id: params[:user_id])
         render_error_as_json(409, 'Conflict', "User with id '#{params[:user_id]}' is already part of conversation id '#{conversation_id}'")
       else
-        unless User.exists?(id: params[:user_id])
-          render_error_as_json(404, 'Not Found', "User with id '#{params[:user_id]}' does not exist")
-        else
+        if User.exists?(id: params[:user_id])
           user = User.find(params[:user_id])
           ConversationUser.create(user: user, conversation: Conversation.find(conversation_id))
           render json: user, serializer: UserWithConversationsSerializer, status: 201
+        else
+          render_error_as_json(404, 'Not Found', "User with id '#{params[:user_id]}' does not exist")
         end
       end
+    else
+      render_error_as_json(404, 'Not Found', "Conversation with id '#{conversation_id}' does not exist")
     end
   end
 
