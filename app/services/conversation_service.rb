@@ -32,6 +32,18 @@ class ConversationService
     end
   end
 
+  def post_message(conversation_id, sender_id, message)
+    if Conversation.exists?(id: conversation_id)
+      if ConversationUser.exists?(conversation_id: conversation_id, user_id: sender_id)
+        create_conversation_message(conversation_id, sender_id, message)
+      else
+        {code: 404, message: 'Not Found', description: "User with id '#{sender_id}' is not part of conversation id '#{conversation_id}'"}
+      end
+    else
+      {code: 404, message: 'Not Found', description: "Conversation with id '#{conversation_id}' does not exist"}
+    end
+  end
+
   private
 
   def create_conversation_users(conversation, user_ids)

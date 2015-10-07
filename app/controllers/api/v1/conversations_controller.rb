@@ -31,15 +31,14 @@ class API::V1::ConversationsController < API::V1::BaseApiController
 
   def post_message
     conversation_id = extract_conversation_id_from_path
-    if Conversation.exists?(id: conversation_id)
-      params = new_conversation_message_params
-      if ConversationUser.exists?(conversation_id: conversation_id, user_id: params[:sender_id])
-        render json: create_conversation_message(conversation_id, params[:sender_id], params[:message]), serializer: MessageSerializer, status: 201
-      else
-        render_error_as_json(404, 'Not Found', "User with id '#{params[:sender_id]}' is not part of conversation id '#{conversation_id}'")
-      end
+    params = new_conversation_message_params
+    conversation_service = ConversationService.new
+    result = conversation_service.post_message(conversation_id, params[:sender_id], params[:message])
+
+    if result.instance_of? Message
+      render json: result, serializer: MessageSerializer, status: 201
     else
-      render_error_as_json(404, 'Not Found', "Conversation with id '#{conversation_id}' does not exist")
+      render_error_as_json(result[:code], result[:message], result[:description])
     end
   end
 
@@ -82,16 +81,4 @@ class API::V1::ConversationsController < API::V1::BaseApiController
     last_path_chunks = path_chunks.last(2)
     last_path_chunks.first
   end
-
-  def create_conversation_message(conversation, sender_id, text)
-    message = Message.new(sender_id: sender_id, text: text)
-
-    if conversation.instance_of? Conversation
-      ConversationMessage.create(conversation: conversation, message: message)
-    elsif conversation.instance_of? String
-      ConversationMessage.create(conversation: Conversation.find(conversation), message: message)
-    end
-    message
-  end
 end
-
