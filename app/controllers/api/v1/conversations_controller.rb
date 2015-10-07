@@ -5,10 +5,8 @@ class API::V1::ConversationsController < API::V1::BaseApiController
   def create
     Conversation.transaction do
       params = new_conversation_params
-      result = ConversationService.new(
-          params[:started_by],
-          params[:recipient_ids],
-          params[:message]).create_conversation
+      conversation_service = ConversationService.new
+      result = conversation_service.create_conversation(params[:started_by], params[:recipient_ids], params[:message])
 
       if result.instance_of? Conversation
         render json: result, serializer: ConversationSerializer, status: 201
